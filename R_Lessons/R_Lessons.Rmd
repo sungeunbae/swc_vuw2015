@@ -1,0 +1,896 @@
+---
+title: "SWC Victoria - Programming with R"
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    toc: yes
+---
+
+**Important notice:** This course material is based on the Software Carpentry lessons "Programming with R", version 5.3 (http://software-carpentry.org/lessons.html).
+
+# Lesson 1: Analysing Census Data
+
+We are studying housing data from the NZ 2006 census, comparing population numbers for different types of household and age groups. The original data was retrieved from the UNdata webservice (https://data.un.org/Data.aspx?q=Population+Age&d=POP&f=tableCode%3a329) and covers a large number of countries in the world. The complete dataset contains more than 45,000 records; handling such amounts of data will be discussed in the SQL lessons tomorrow.
+
+The data is stored as contingency tables (or crosstabs) in comma-separated values (CVS) format and can be easily inspected with a text editor or spreadsheet program, such as LibreOffice Calc or Microsoft Excel. Each row contains data for a given age group, which is specified in the first column. Each column contains population sizes for all age groups that live in a given type of household, as specified in the first row.
+
+The first few rows of our data look like this:
+
+```
+"Age","A_single_family_nucleus_and_other_persons","Couple_with_children","Couple_without_children","One-person_household","Other","Single_parent_with_children","Two_or_more_family_nuclei","Unknown"
+"0-14",0,592740,12,51,54,184086,62340,19587
+"15-19",0,162150,12147,2643,19521,62316,21534,6456
+"20-24",0,77619,51990,8769,53673,33693,28155,7503
+```
+**Note:** Spaces in row names and column names are problematic for handling the data in R, they were therefore either removed or replaced by underscores "_".
+
+## Loading Data
+
+To load the housing data, we first need to change the current working directory using the function `setwd`:
+```{r}
+setwd("~/swc_vuw2015/R_Lessons")
+```
+**Note for Windows users:** R was originally developed for Unix-type platforms, where forward slashes `/` are used for file paths as in the example above. Windows inherited backslashes `\` from MS-DOS. Backslashes have a different meaning in R, but they may still be used if doubled up (`\\`). However, it is advisable to use forward slashes `/`, so that users with Unix-type operating systems can run your programs on their computers. Moreover, using the tilde `~` in R means the "Documents" directory for the current user in Windows, whereas it means the home directory in a Unix-type operating system.
+
+Alternatively you can change the working directory using the RStudio GUI using the menu option `Session` -> `Set Working Directory` -> `Choose Directory...`.
+
+We can load the data into R using the `read.csv` function:
+```
+read.csv(file = "data/nz_census_crosstab.csv", header = TRUE, row.names = 1)
+```
+`read.csv` has three arguments: the path to the file we want to read, whether the first line of the file contains column names ("header"), and the number of the column with row names (if any). The second argument is handled with the logical values `TRUE` or `FALSE`, while the third argument is simply an integer number.
+
+Since we didn't tell it to do anything else with the function's output, the console will display the full contents of the file `nz_census_crosstab.csv`, and we can't use data unless we assign it to a variable.
+
+A variable is just a name for a value, such as `x`, `current_temperature`, or `subject_id`. We can create a new variable simply by assigning a value to it using the assignment operator `<-`
+```{r}
+weight_kg <- 55
+```
+In general, R will print to the console any object returned by a function or operation *unless* we assign it to a variable.
+```{r}
+weight_kg
+```
+We can also use the `print` function for parantheses `()` for printing variable values:
+```{r}
+print(weight_kg)
+(weight_kg)
+```
+We can do arithmetic with the variable:
+```{r}
+# weight in pounds:
+2.2 * weight_kg
+```
+**Note** The `#` character is used for comments in the code, which is useful to document things so that others (and us the next time we read it) have an easier time following what the code is doing.
+
+We can change the variable's value:
+```{r}
+weight_kg <- 57.5
+# weight in kilograms is now
+weight_kg
+```
+
+## Hands-on: Variables
+Draw diagrams showing which variables refer to which values after each statement in the following program:
+```
+# Weight and age on Earth
+location <- "Earth"
+weight <- 50
+age <- 35
+# Take a trip to Pluto with "New Horizons" space probe
+location <- "Pluto"
+weight <- weight * 0.063
+age <- age + 9
+```
+What does the following program print out (don't use the computer!)?
+```
+my_favourite_colour <- "blue"
+your_favourite_colour <- "red"
+your_favourite_colour <- my_favourite_colour
+print("Your favourite colour is:")
+print(your_favourite_colour)
+```
+
+(a) "my_favourite_colour"
+(b) "red"
+(c) "your_favourite_colour"
+(d) "blue"
+
+## Manipulating data
+Now that we know how to assign things to variables, let's re-run `read.csv` and save its result:
+```{r}
+dat <- read.csv(file = "data/nz_census_crosstab.csv", header = TRUE, row.names = 1)
+```
+Let's look at the first and last lines:
+```
+head(dat)
+tail(dat)
+```
+
+Now that our data is loaded in memory, we can start doing things with it. First, let's ask what type of thing `dat` is:
+```{r}
+class(dat)
+```
+Data frames are very similar to spreadsheets, they are very useful for storing and handling tabulated data.
+We can see the dimensions, or shape, of the data frame with the function `dim`:
+```{r}
+dim(dat)
+```
+The data frame has 19 rows and 8 columns.
+
+The column names and row names are not counted, R transfered them into the "metadata" of the data frame, and we can look at them using the functions `rownames` and `colnames`:
+```{r}
+rownames(dat)
+colnames(dat)
+```
+
+We can access single values from the data frame using indices:
+```{r}
+# first value in dat
+dat[1, 1]
+# middle value in dat
+dat[10, 4]
+```
+Note again how the first value is a number, rather than the name of the first column, since column names and row names are not part of the data in the data frame.
+Whole sections can be accessed as well, e.g.,
+```{r}
+dat[1:3, 2:4]
+```
+Note how R shows row names and column names, even though we did not explicitly ask for it this time. Whether or not these names are shown depends on what exactly we ask R to print.
+
+We can use the function `c`, which stands for combine, to select non-contiguous values:
+```{r}
+dat[c(3, 5, 11), c(1, 2, 4, 5)]
+```
+If row indices or column indices are omitted, R returns all rows or columns, respectively:
+```{r}
+# All columns for row 5
+dat[5, ]
+# All rows for column 2
+dat[, 2]
+```
+
+## Hands-on: Indexing
+More indexing tricks: what do the following lines return (try it on your computer)?
+```
+dat[-3,]
+dat[, "One_person_household"]
+dat["100+", -1]
+```
+A vector is a variable that has any number of elements of the same type, such as integer numbers, character strings, etc. A list is a variable that has any number of elements of mixed (or same) type. We can take slices of vectors and lists as well:
+```{r}
+# Vector: elements must have same type
+animal <- c("m", "o", "n", "k", "e", "y")
+# first three characters
+animal[1:3]
+# last three characters
+animal[4:6]
+# List: elements can have different type
+noble_gases <- list("Helium", "He", 2, "Neon", "Ne", 10, "Argon", "Ar", 18)
+```
+
+What is the output of the following code?
+```
+animal[1:4]
+animal[-4]
+animal[-1:-4]
+```
+And how can we get the following output from `noble_gases`?
+```
+noble_gases[?]
+"He" "Ne" "Ar"
+```
+
+When analyzing data we often want to look at partial statistics, such as the maximum population per age group or the average value per household type. This is one way to do this:
+```{r}
+# first row, all columns
+age_1 <- dat[1, ]
+# max fraction for this age group
+max(age_1)
+```
+The selection and function call can also be combined:
+```{r}
+max(dat[1, ])
+```
+R has more function for basic statistics, now used on column 2:
+```{r}
+min(dat[, 2])
+mean(dat[, 2])
+median(dat[, 2])
+sd(dat[, 2]) # sd = standard deviation
+```
+
+What if we need the maximum populations for all ages, or the averages for each housing type? As the diagram below shows, we want to perform the operation across a margin of the data frame:
+
+![](r-operations-across-axes.svg)
+
+To support this, we can use the apply function.
+**Tip:** To learn about a function in R, e.g. `apply`, we can read its help documention by running `help(apply)` or `?apply`.
+
+`apply` allows us to repeat a function on all of the rows (`MARGIN = 1`) or columns (`MARGIN = 2`) of a data frame. To obtain the maximum population for each age group, we will need to calculate the maximum of all of the rows (`MARGIN = 1`) of the data frame:
+```{r}
+max_pop_per_age <- apply(dat, 1, max)
+class(max_pop_per_age)
+```
+Note how the variable class changed from "data.frame" to "integer" - the result of the `apply` function is a vector of integer numbers.
+And to obtain the average population for each housing type we will need to calculate the mean of all the columns (`MARGIN = 2`) of the data frame.
+```{r}
+mean_pop_per_housing_type <- apply(dat, 2, mean)
+```
+**Tip:** Some common operations have more efficient alternatives. For example, you can calculate the row-wise or column-wise means with `rowMeans` and `colMeans`, respectively.
+
+## Hands-on: Subsetting and basic statistics
+Which of the following lines of R code gives the correct answer to the question?
+
+```
+# Using slicing and partial statistics, how can we determine the maximum population
+# for age group 5 and housing types 3-7?
+# max(dat[?])
+```
+
+a. max(dat[5, ])
+b. max(dat[3:7, 5])
+c. max(dat[5, 3:7])
+d. max(dat[5, 3, 7])
+
+## Plotting
+R makes visualising data through plots very easy. To plot population numbers for a given type of housing across all age groups, use:
+```{r}
+plot(dat[,"Couple_with_children"])
+```
+
+This is also called a "scatter plot".
+
+There are many different types of plots available in R, and the output of functions like `plot` can also change with the variable type used for holding data. One commonly used form to plot data is the "bar plot":
+```{r}
+barplot(dat[,"Couple_with_children"], names.arg = rownames(dat), las = 2, main = "Couple with children")
+```
+
+The argument `names.arg` controls the labels that are printed beneath each bar. We use the `rownames` function again to extract the row names from our data frame. The argument `las` controls the orientation of the labels, `las = 2` means "draw all labels perpendicular to their axis".
+
+## Hands-on: Plotting
+To make it easier to understand the data, it is useful to look at population fractions rather than actual population numbers. Make a bar plot for household type "Couple with children" that shows the population fraction within each age group. Use the `apply` or `rowSums` functions to compute total populations for each age and divide the column "Couple_with_children" by the result:
+```
+dat[,"Couple_with_children"]/rowSums(dat)
+```
+
+Solution:
+```{r}
+pop_fractions <- dat[,"Couple_with_children"]/rowSums(dat)
+barplot(pop_fractions, las = 2, main = "Couple with children")
+```
+
+# Lesson 2: Anaylising Multiple Data Sets
+
+We have several data sets to process and analyse. To get a vector with available file names, we can use the `list.files` function:
+```
+list.files(path = "data", pattern = "csv")
+```
+The argument `path` tells `list.files` where to look for files, the argument `pattern` can be used to select files whose names match a given pattern.
+
+Of course, we can repeat the same analysis over and over - but it will be frustrating to do so. If you want to become a good programmer, you have to become lazy.
+
+## For Loops
+
+Try printing each character of the vector:
+```
+s <- c("W", "e", "l", "l", "i", "n", "g", "t", "o", "n")
+s[1]
+s[2]
+s[3]
+s[4]
+s[5]
+s[6]
+s[7]
+s[8]
+s[9]
+s[10]
+```
+
+Let's try this again with this character vector:
+```{r}
+# Taumatawhakatangihangakoauauotamateapokaiwhenuakitanatahu
+s <- c("t", "a", "u", "m", "a", "t", "a", "w", "h", "a", "k", "a", "t", "a", "n", "g", "i", "h", "a", "n", "g", "a", "k", "o", "a", "u", "a", "u", "o", "t", "a", "m", "a", "t", "e", "a", "p", "o", "k", "a", "i", "w", "h", "e", "n", "u", "a", "k", "i", "t", "a", "n", "a", "t", "a", "h", "u")
+```
+
+Looping over code manually also invites errors:
+```{r}
+s[58]
+```
+The result `NA` (for **N**ot **A**vailable) has special importance in R, as it designates missing data in a statistical sense.
+
+Here is a better approach:
+```
+for (letter in s)
+{
+  print(letter)
+}
+```
+This version uses a for loop to repeat an operation. The keyword `in` is part of the `for` syntax, and the body of the loop is enclosed in curly braces `{}`.
+
+Here is another loop that repeatedly updates a variable:
+```
+len <- 0
+for (letter in s)
+{
+  len <- len + 1
+}
+# Number of characters
+len
+```
+The number `len` is updated every time the loop is executed, and it keeps its value after the loop has finished.
+
+Note also that finding the length of a vector is such a common operation that R actually has a built-in function to do it called `length`:
+```{r}
+length(s)
+```
+
+## Hands-on: Loops
+
+What does the following code print out - remember, `c` is the combine function (don't use your computer!)?
+```
+s1 <- c("N", "e", "w", "t", "o", "n")
+s2 <- NULL
+for ( char in s1 )
+{
+  s2 <- c(char, s2)
+}
+s2
+```
+
+(a) NULL
+(b) notweN
+(c) N, e, w, t, o, n
+(d) Newton
+
+In the "wheat and chessboard problem", we place one grain of wheat on the first square of a chessboard, two grains of wheat on the second square, four grains on the third square, and so on, doubling the number on each subsequent square. A chessboard has 64 squares, and we want to know how many grains we need in total. To solve this problem, write a loop with the following ingredients:
+```
+# Sq 1: 1 grain, sq 2: 2 grains, sq 3: 4 grains, sq 4: 8 grains
+# To generate a sequence of integer numbers from 1 to 64:
+seq(1, 64)
+# To compute the number of grains for a given square, e.g., square 4:
+square_number <- 4
+grain_number <- 2^(square_number - 1)
+# Sum up all grain numbers and compare the result to the mathematical solution
+total_grain_number <- 2^64-1
+```
+**Note:** There are many different ways to do this, but please use a loop...
+
+Solution:
+```
+# Reset counter for total number of grains
+total_grain_number <- 0
+# Loop over integer sequence 1..64
+for ( square_number in seq(1, 64) )
+{
+  # Compute number of grains for this square and add up
+  grain_number <- 2^(square_number - 1)
+  total_grain_number <- total_grain_number + grain_number
+}
+# Compare our result with the mathematical solution
+total_grain_number
+2^64 - 1
+# Or look at difference (don't forget the parantheses):
+total_grain_number - (2^64 - 1)
+```
+
+## Processing Multiple Files
+
+Use the `list.files` function to list all csv files or census data files in the `data` directory:
+```{r}
+list.files(path = "data", pattern = "csv", full.names = TRUE)
+list.files(path = "data", pattern = "census", full.names = TRUE)
+```
+**Note:** The parameter `full.names = TRUE` needs to be set so that the file names contain the name of the subdirectory, too.
+
+## Hands-on: Drawing multiple graphs
+Write a `for` loop that cycles through the output of the `list.files` function, reads each file with census data using the `read.csv` function and produces bar plots for population fractions in column "Couple_with_children". The plots should show the column name and file name in their title (use the combine function `c()` in parameter `main`). For reference, here are some relevant code snippets that we used before:
+```
+list.files(path = "data", pattern = "census", full.names = TRUE)
+dat <- read.csv(file = "data/nz_census_crosstab.csv", header = TRUE, row.names = 1)
+pop_fractions <- dat[,"Couple_with_children"]/rowSums(dat)
+barplot(pop_fractions, las = 2, main = "Couple with children")
+```
+**Tip:** Using the help function, look for the parameter for `barplot` that sets the limits of the y axis, to make plots easily comparable. You'll need to provide both a lower and an upper limit with a vector, e.g., `c(0.0, 0.4)`.
+
+Solution:
+```{r}
+# Set column name for plotting
+column <- "Couple_with_children"
+# Loop over all files in directory "data" whose names contain "census"
+for ( censusfile in list.files(path = "data", pattern = "census", full.names = TRUE) )
+{
+  dat <- read.csv(file = censusfile, header = TRUE, row.names = 1)
+  pop_fractions <- dat[, column]/rowSums(dat)
+  # Set limits of y axis at 0 and 0.7
+  barplot(pop_fractions, las = 2, main = c(column, censusfile), ylim = c(0.0, 1.0))
+}
+```
+
+In order to save and possibly share your results, it is handy to generate one or more pdf files with the plots. This can be easily done using the `pdf` function. Once the pdf file has been started with `pdf`, all graphical output will be inserted into the file. You will have to close the file using the function `dev.off`, where "dev" is an abbreviation of "device":
+```
+pdf("census.pdf")
+# Insert plot commands here
+dev.off()
+```
+**Note:** Don't forget to use `dev.off`, otherwise the pdf file will be unreadable, and you won't see any plots in RStudio. To check which output device you are currently using, use the function `dev.cur()`. It should say "pdf" if your pdf file is still open, and "null device" or "RStudioGD" if plots will be visualised normally.
+
+To produce one pdf file with all plots in it, do the following:
+```{r}
+pdf("census.pdf")
+column <- "One_person_household"
+for ( censusfile in list.files(path = "data", pattern = "census", full.names = TRUE) )
+{
+  dat <- read.csv(file = censusfile, header = TRUE, row.names = 1)
+  pop_fractions <- dat[, column]/rowSums(dat)
+  barplot(pop_fractions, las = 2, main = c(column, censusfile), ylim = c(0.0, 0.7))
+}
+dev.off()
+```
+
+# Lesson 3: Making Choices
+
+It is useful if a program is able to automatically decide between different options, e.g., if a plot should be inserted into a file or not. In R, this is done using conditional statements that look like this:
+```{r}
+num <- 37
+if ( num > 100 )
+{
+  print("greater")
+} else
+{
+  print("not greater")
+}
+```
+Some more decision-making, this time without `else`:
+```{r}
+num <- 53
+if (num > 100) {
+  print("num is greater than 100")
+}
+```
+
+It is also possible to have more than two options:
+```{r}
+num <- 9
+if (num > 0)
+  {
+    print("positive number")
+  } else if (num == 0)
+  {
+    print("0")
+  } else
+  {
+    print("negative number")
+  }
+```
+
+Combined tests using `&` for "and" are possible, too:
+```{r}
+if (1 > 0 & -1 > 0) {
+    print("both parts are true")
+} else {
+  print("at least one part is not true")
+}
+```
+
+Using `|` for "or" also works:
+```{r}
+if (1 > 0 | -1 > 0) {
+    print("at least one part is true")
+} else {
+  print("neither part is true")
+}
+```
+
+## Hands-on: Making choices
+
+We can use automatic decision making to repair our bar plot loop if a column is requested that does not exist in all data files. This is the case for column "A_single_family_nucleus_and_other_persons", which stops program execution if not found. To decide whether or not a data frame should be analysed, use the following test inside the loop:
+```
+# Near the top of the program
+column <- "A_single_family_nucleus_and_other_persons"
+# ...
+# Inside the loop (data must be loaded first!!):
+if( column %in% colnames(dat) )
+{
+  # do the analysis
+}
+# ...
+```
+
+Solution:
+```
+pdf("census.pdf")
+column <- "A_single_family_nucleus_and_other_persons"
+for ( censusfile in list.files(path = "data", pattern = "census", full.names = TRUE) )
+{
+  dat <- read.csv(file = censusfile, header = TRUE, row.names = 1)
+  if ( column %in% colnames(dat) )
+  {
+    pop_fractions <- dat[, column]/rowSums(dat)
+    barplot(pop_fractions, las = 2, main = c(column, censusfile), ylim = c(0.0, 0.7))
+  }
+}
+dev.off()
+```
+
+# Lesson 4: Creating Functions
+
+Functions are an essential ingredient for programming. Using functions, we can avoid having to repeat the same code over and over again, and we can bundle up parts of our program into logical blocks.
+
+Without functions, the same program would have to be repeated for every input:
+```{r}
+s <- c("w", "i", "n", "d", "o", "w", "s", "8")
+for( chr in s )
+{
+  if ( chr %in% seq(0, 9) )
+  {
+    print(c(chr, "is a digit"))
+  } else if ( chr %in% c("a", "e", "i", "o", "u") )
+  {
+    print(c(chr, "is a vowel"))
+  } else
+  {
+    print(c(chr, "is a consonant"))
+  }
+}
+s <- c("w", "i", "n", "d", "o", "w", "s", "1", "0")
+```
+**Note:** R performed automatic variable type conversion between variable types "character" and "integer" for the statement `chr %in% seq(0, 9)`.
+
+To avoid repetition, we can use a function that has one argument called `string`:
+```{r}
+classify_char <- function(string)
+{
+  print(string)
+  for( chr in string )
+  {
+    if ( chr %in% seq(0, 9) )
+    {
+      print(c(chr, "is a digit"))
+    } else if ( chr %in% c("a", "e", "i", "o", "u") )
+    {
+      print(c(chr, "is a vowel"))
+    } else
+    {
+      print(c(chr, "is a consonant"))
+    }
+  }
+}
+# Let's try it:
+s <- c("w", "i", "n", "d", "o", "w", "s", "1", "0")
+classify_char(s)
+```
+**Important note:** A function must always be defined before you use it in your program for the first time!
+
+Functions can also return a result, and they can define a default value that is used if the argument is not set:
+```{r}
+double_number <- function(nr = 0)
+{
+  return(2*nr)
+}
+double_number(2)
+double_number(seq(1,3))
+double_number()
+```
+
+## Hands-on: Functions
+Write a function called `fence` that takes two vectors as arguments, called `original` and `wrapper` and returns a new vector that thas the wrapper vector at the beginning and end of the original:
+```
+best_practice <- c("Write", "programs", "for", "people", "not", "computers")
+asterisk <- "***"  # R interprets a variable with a single value as a vector
+                   # with one element.
+fence(best_practice, asterisk)
+```
+Remember, the `c` function is used to combine vectors into a new vector. You could also add a default value for the wrapper, e.g., "+++"
+
+Solution:
+```{r}
+fence <- function(original, wrapper = "+++")
+{
+  return(c(wrapper, original, wrapper))
+}
+
+best_practice <- c("Write", "programs", "for", "people", "not", "computers")
+asterisk <- "***"
+fence(best_practice, asterisk)
+fence(best_practice)
+```
+
+Write a function called `analyse` that takes a filename pattern ("census"), a column name, and an output filename as its three arguments. The function shall automatically loop over all files that match the pattern, read the file, generate a bar plot from the data in the chosen column, and save these plots in a pdf file that has the output filename. Reuse the code that we generated above. The function should look similar to this:
+```
+analyse <- function(pattern, column, outputfilename)
+{
+  ### Insert code here
+}
+# Let's try it!
+analyse("census", "Single_parent_with_children", "census.pdf")
+```
+
+Solution:
+```{r}
+# This function reads all files in directory "data" whose names match
+# the first argument "pattern". It creates bar plots of the data in
+# column "column", if "column" exists, and inserts the plots into a
+# pdf file named "outputfilename".
+analyse <- function(pattern, column, outputfilename)
+{
+  # Start pdf file
+  pdf(outputfilename)
+  for ( censusfile in list.files(path = "data", pattern = pattern, full.names = TRUE) )
+  {
+    dat <- read.csv(file = censusfile, header = TRUE, row.names = 1)
+    # Check if requested column exists in data frame "dat"
+    if ( column %in% colnames(dat) )
+    {
+      pop_fractions <- dat[,column]/rowSums(dat)
+      barplot(pop_fractions, las = 2, main = c(column, censusfile), ylim = c(0.0, 0.7))
+    }
+  }
+  # Close pdf file
+  dev.off()
+}
+# Let's try it!
+analyse("census", "Single_parent_with_children", "census.pdf")
+```
+
+# Lesson 6: Defensive Programming
+
+In an ideal world, you write a program and it will work out-of-the-box. Sadly, this doesn't happen often in reality. How do we know if our program works correctly? And how do we know if our program still works correctly when we make changes?
+
+One strategy is to use "defensive programming" techniques, where "assertions" are added to the code so that it checks itself as it runs.
+
+Consider the following example:
+```{r}
+# This function averages over its input vector "ages"
+# and prints the result.
+avg_age <- function(ages)
+{
+  sum <- 0
+  for ( age in ages )
+  {
+    sum <- sum + age
+  }
+  print(sum/length(ages))
+}
+# Try it
+avg_age(c(10, 20, 30))
+avg_age(c(10, -30, 20))
+```
+
+To safeguard agains negative ages, an assertion is inserted. The function "stopifnot" can be used for this, as it runs a logical test and stops the program if the result is `FALSE`:
+```
+avg_age <- function(ages)
+{
+  sum <- 0
+  for ( age in ages )
+  {
+    # Check if the age is a positive number
+    stopifnot(age >= 0)
+    sum <- sum + age
+  }
+  print(sum/length(ages))
+}
+# Try it
+avg_age(c(10, -30, 20))
+```
+**Note:** If RStudio enters a "Debugging" mode (the command prompt in the console panel changes to something like "Browse[1]>"), you can leave the mode again by entering "Q" (for "Quit"), or by clicking on the "Stop" button above the console panel.
+
+## Hands-on: Defensive Programming
+
+What is (roughly, not exactly) the output of the following code (potentially ignoring debugger output):
+```
+seq_check <- function(string)
+{
+  for (char in string)
+  {
+    stopifnot(char %in% c("a", "t", "c", "g"))
+  }
+  print(c("All good: ", string))
+}
+seq_check(c("a", "t", "c", "g"))
+seq_check(c("b", "c", "g", "t"))
+seq_check(c("c", "t", "g", "a"))
+```
+
+(a)
+"All good: " "a" "t" "c" "g"  
+"All good: " "b" "c" "g" "t"  
+"All good: " "c" "t" "g" "a"
+
+(b)
+"All good: " "a" "t" "c" "g"  
+Error: char %in% c("a", "t", "c", "g") is not TRUE  
+Error: char %in% c("a", "t", "c", "g") is not TRUE
+
+(c)
+Error: char %in% c("a", "t", "c", "g") is not TRUE
+
+(d)
+"All good: " "a" "t" "c" "g"  
+Error: char %in% c("a", "t", "c", "g") is not TRUE  
+"All good: " "c" "t" "g" "a"
+
+# Lesson 5: Command-Line Programs
+
+So far, we used R interactively for exploring data and prototyping code. However, as soon as we want to use our program in a pipeline or run it in a shell script to process thousands of data files, we need to make it work like other command-line tools. This can be done using `Rscript`, for example to read a data set and print total population number per age group:
+```
+$ Rscript readings.R --total data/nz_census_crosstab.csv
+858870
+286767
+261402
+...
+8886
+1341
+165
+```
+
+We might also want to look at the minimum of the first four lines:
+```
+head -4 data/nz_census_crosstab.csv | Rscript readings.R --min
+```
+or the maximum population in several files:
+```
+$ Rscript readings.R --max data/*-census_crosstab.csv
+```
+
+## Command-Line Arguments
+
+Using RStudio (or any text editor), save the following line of code in a text file called `session-info.R`:
+```
+sessionInfo()
+```
+The function `sessionInfo` outputs the version of R you are running as well as the type of computer you are using (as well as the versions of the packages that have been loaded). This is very useful information to include when asking others for help with your R code.
+
+Now we can run the code in the file we created from the Unix Shell using `Rscript`:
+```
+Rscript session-info.R
+```
+**Note for Windows users:** This will also work with the Windows command prompt, but you will most likely have to set up the environment variable `Path` to include the location of the `Rscript.exe` program. `Rscript.exe` can usually be found in locations like: `C:\Program Files\R\R-3.2.0\bin` (it may be necessary to adjust the version number, and sometimes `Program Files (x86)`, or another directory may be used). Open the Windows control panel, enter "env" in the search box, and click on "Edit environment variables for your account". Select the entry "Path" in the first list "User variables for xxx", click on "Edit..." and insert the location for `Rscript` at the front, followed by a semicolon ";".
+
+Let's try and read command-line arguments using the "CommandArgs" function. Insert the following lines in a file named `print-args.R`:
+```
+args <- commandArgs()
+cat(args, sep = "\n")
+```
+The function `cat` outputs the contents of (vector) variable `args` and starts a new line after each element. Running the program should deliver something similar to this (here on a Windows machine):
+```
+Rscript print-args.R
+```
+```
+C:\PROGRA~1\R\R-32~1.0\bin\x64\Rterm.exe
+--slave
+--no-restore
+--file=print-args.R
+```
+These arguments are standard arguments that are automatically passed without us having to explicitly set them. Now lets try adding our own arguments:
+```
+Rscript print-args.R first second third
+```
+```
+C:\PROGRA~1\R\R-32~1.0\bin\x64\Rterm.exe
+--slave
+--no-restore
+--file=print-args.R
+first
+second
+third
+```
+
+## Hands-on: Command-Line Arguments
+
+Reusing the function `analyse`, write a program that generates a pdf file with bar plots when called on the command line as follows:
+```
+Rscript analyse_census.R census Single_parent_with_children census.pdf
+```
+**Tip:** The function `commandArgs` removes standard arguments from its output when the `trailingOnly` flag is set to `TRUE`; see its help file (`?commandArgs`) for further information.
+
+Solution (contents of file `analyse_census.R`):
+```
+#
+# Function definition
+#
+
+# This function reads all files in directory "data" whose names match
+# the first argument "pattern". It creates bar plots of the data in
+# column "column", if "column" exists, and inserts the plots into a
+# pdf file named "outputfilename".
+analyse <- function(pattern, column, outputfilename)
+{
+  # Start pdf file
+  pdf(outputfilename)
+  for ( censusfile in list.files(path = "data", pattern = pattern, full.names = TRUE) )
+  {
+    dat <- read.csv(file = censusfile, header = TRUE, row.names = 1)
+    # Check if requested column exists in data frame "dat"
+    if ( column %in% colnames(dat) )
+    {
+      pop_fractions <- dat[,column]/rowSums(dat)
+      barplot(pop_fractions, las = 2, main = c(column, censusfile), ylim = c(0.0, 0.7))
+    }
+  }
+  # Close pdf file
+  dev.off()
+}
+
+#
+# Main part of the program starts here
+#
+
+# Get command-line arguments, but remove
+# the standard arguments from the output
+# vector of the "commandArgs" function.
+args <- commandArgs(trailingOnly = TRUE)
+
+# Check if all parameters were supplied - if not, issue an
+# error message. We expect exactly 3 arguments.
+# Note: we could also use "stopifnot" here, but it is helpful
+# for users to provide additional usage information.
+if ( length(args) == 3)
+{
+  # Extract the information from args
+  file_name_pattern <- args[1]
+  column_name <- args[2]
+  pdf_file_name <- args[3]
+  # Run the "analyse" function
+  analyse(file_name_pattern, column_name, pdf_file_name)
+} else {
+  # There were too few or too many arguments. Create an
+  # error message and provide usage information.
+  print("analyse_census.R: Too few or too many arguments.")
+  print("Usage:")
+  print("analyse_census.R pattern column output_file")
+  print("")
+}
+```
+
+# Appendix
+
+## Additional Topics
+
+There are many more things to say about R, but here are two topics you may come across soon when working with R:
+
+### Factor Variables
+R uses `factor` variables to mark data as "categorical". Some standard examples for categorical data would be "blood type", "colour", or "age group". The individual values that `factor` variables can assume are called "levels". The `read.csv` function converts columns with character data to factors by default. Let's look at the UN data again (this is only a demonstration rather than a proper analysis!):
+```
+# Load the UN dataset
+undata <- read.csv("data/UNdata_Export_20150722_004249658.csv", header = TRUE, nrows = 45556)
+# Most columns in the data contain factor variables. Let's list the types of household, this
+# time using the "$" notation to select the column:
+levels(undata$Type.of.household)
+# Select all rows for Uruguay
+rows <- undata$Country.or.Area == "Uruguay"
+# Create a box plot for population numbers, grouped by type of household
+# The "data = " argument is used here to specify the source data frame, so that
+# the "Value" and "Type.of.household" columns can be specified directly.
+boxplot(Value ~ Type.of.household, data = undata[rows, ], las = 2, ylim = c(0, 300000))
+```
+This example uses R's `formula` syntax to define the box plot:
+```
+values ~ group
+```
+`values` is a column with numbers to be analysed, and `group` is a column with factors that will be used for grouping data in `values`. The `formula` syntax is used in many places, such as model fitting, see the help pages (`?formula`) for more information.
+
+### Packages
+Packages are used to add new functions, objects, etc. to R. There is a large number of packages for all sorts of applications (see CRAN link below), and you may find that someone has already implemented a function that you need. If a package is not already available in your R installation, you can download and install it using either:
+
+* the "Install Packages..." command in RStudio (Tools > Install Packages...)
+* the `install.packages` function in R (a tutorial for this command can be found here: http://www.r-bloggers.com/installing-r-packages)
+
+Once the package is installed, you will need to make it available to your R program (using the `rpart` package as an example here):
+```
+library("rpart")
+```
+To learn more about your new package, use the `help` command:
+```
+help(package = "rpart")
+```
+
+## R Resources on the Net
+
+Owing to R's increasing popularity, there are plenty of resources available on the internet:
+
+* https://www.r-project.org - the main project page for R
+* http://cran.stat.auckland.ac.nz/web/packages/available_packages_by_name.html - CRAN has a big archive of R packages for a large number of applications
+* http://www.statmethods.net - easy-to-use introductions and tutorials to a good variety of statistical applications with R
+* http://www.r-bloggers.com - lots of articles and tutorials about R and specific applications
+* https://stackoverflow.com - very useful forum where you can find discussions about all sorts of computing questions, including R
