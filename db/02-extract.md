@@ -105,6 +105,10 @@ Let's print out just those two fields (print the first 5 only)
 ```{r}
  head(bibData[,c("V1","V4")],5)
 ```
+or simply
+```{r}
+ head(bibData[,c(1,4)],5)
+```
 Its output is:
 
 ~~~ {.output}
@@ -119,18 +123,17 @@ Its output is:
 
 The last step is to turn lines with multiple authors into multiple lines,
 each with a single author.
-This is the right time to use `str.split`:
+This is the right time to use `strsplit`:
 the authors' names are separated by semi-colons,
 so we can break each list of authors on those
 and use another loop to print the results one by one:
 
 ```{r}
-#for (i in 1:nrow(bibData)) {
 for (i in 1:5) {
     key<-bibData[i,1]
     authors<-strsplit(as.character(bibData[i,4]),";")[[1]]
-    for (j in 1:length(authors)) {
-        print(paste(key,authors[j]))
+    for (author in authors) {
+        print(paste(key,author))
     }
 }
 ```
@@ -155,12 +158,11 @@ the second and subsequent name on each line comes out with an unwanted space at 
 What happens if we try to split on a semi-colon plus a space?
 
 ```{r}
-#for (i in 1:nrow(bibData)) {
 for (i in 1:5) {
     key<-bibData[i,1]
     authors<-strsplit(as.character(bibData[i,4]),"; ")[[1]]
-    for (j in 1:length(authors)) {
-        print(paste(key,authors[j]))
+    for (author in authors) {
+        print(paste(key,author))
     }
 }
 ```
@@ -177,8 +179,72 @@ for (i in 1:5) {
 [1] "PNGQMCP5 Niculescu-Mizil, Alexandru"
 ~~~
 
-And that's that:
-the first step of our data extraction is done.
+Let's examine more result. Replace `1:5` with `1:20` and run the code again.
+
+~~~{.output}
+[1] "8SW85SQM McClelland, James L"
+[1] "85QV9X5F McClelland, J. L."
+[1] "85QV9X5F  McNaughton, B. L."
+[1] "85QV9X5F  O'Reilly, R. C."
+[1] "Z4X6DT6N Ratcliff, R."
+[1] "F5DGU3Q4 McCloskey, M."
+[1] "F5DGU3Q4  Cohen, N. J."
+[1] "PNGQMCP5 Buciluǎ, Cristian"
+[1] "PNGQMCP5  Caruana, Rich"
+[1] "PNGQMCP5  Niculescu-Mizil, Alexandru"
+...
+[1] "VE8MQ378  Wu, David"
+[1] "VE8MQ378  Catanzaro, Bryan"
+[1] "VE8MQ378  Andrew, Ng"
+[1] "CFKZSBNQ Brakel, Philémon"
+[1] "CFKZSBNQ  Stroobandt, Dirk"
+[1] "CFKZSBNQ  Schrauwen, Benjamin"
+[1] "R5V4PFPP Ising, E."
+[1] "A3F3BZ3H Mandel, Michael"
+[1] "A3F3BZ3H  Pascanu, Razvan"
+[1] "A3F3BZ3H  Eck, Douglas"
+[1] "A3F3BZ3H  Bengio, Yoshua"
+[1] "A3F3BZ3H  Aeillo, L. M."
+[1] "A3F3BZ3H  Schifanella, R."
+[1] "A3F3BZ3H  Menczer, F."
+...
+
+[1] "RI2NVDQ3  Vanderplas, J."
+[1] "RI2NVDQ3  Passos, A."
+[1] "RI2NVDQ3  Cournapeau, D."
+[1] "RI2NVDQ3  Brucher, M."
+[1] "RI2NVDQ3  Perrot, M."
+[1] "RI2NVDQ3  Duchesnay, E."
+~~~
+
+Someone with sharp eyes might have noticed that some entries are missing between "R5V4PFPP Ising, E." and "A3F3BZ3H Mandel, Michael"
+![](img/missing_entries.png)
+
+This is because the output of strsplit is an empty list and the for loop never runs.
+In such a case, we should at least add an empty string "" as an author 
+```{r}
+for (i in 1:20) {
+    key<-bibData[i,1]
+    authors<-strsplit(as.character(bibData[i,4]),"; ")[[1]]
+    if (length(authors)==0) {
+      authors<-c('')
+    }
+    for (author in authors) {
+        print(paste(key,author))
+    }
+}
+```
+
+~~~{.output}
+....
+[1] "R5V4PFPP Ising, E."
+[1] "TC545KQV "
+[1] "XAHVRAS6 "
+[1] "A3F3BZ3H Mandel, Michael"
+....
+~~~
+
+Now, the first step of our data extraction is done.
 
 
 > ## Checking Assumptions {.challenge}

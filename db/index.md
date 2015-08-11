@@ -16,9 +16,8 @@ that would otherwise be difficult or impossible to work with.
 >
 > Learners should have completed introductory lessons on:
 >
-> *   the Unix shell (head and tail, word count, sorting, and pipes)
-> *   Git (setting up a repository, committing files)
-> *   Python (libraries, loops, list indexing, string formatting)
+> *   the Unix shell ( pipes)
+> *   R (libraries, loops, list indexing, string formatting)
 > *   SQL (creating tables, inserting data, joins)
 
 ## Topics

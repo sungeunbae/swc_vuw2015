@@ -68,7 +68,7 @@ img {
 <blockquote>
 <h2>Learning Objectives</h2>
 <ul>
-<li>Write a short Python program to create a single-table database by printing SQL statements.</li>
+<li>Write a short R program to create a single-table database by printing SQL statements.</li>
 <li>Explain when and why to use this approach rather than connecting to the database programmatically.</li>
 <li>Explain why inferences drawn from unnormalized data are always approximate.</li>
 </ul>
@@ -192,6 +192,12 @@ insert into data values(&quot;UKMMCR7E&quot;,&quot;Markiewicz, Tomasz&quot;);
 <p>To create a database, let’s use a pipe. <sub>~</sub> {.input} $ Rscript code/convert-db.R | sqlite3 bibligraphy.db <sub>~</sub></p>
 <p>This pipeline takes about four seconds to run on my laptop, and creates a 205 kbyte file called <code>bibliography.db</code>. Let’s have a look at what that database contains:</p>
 <pre class="input"><code>$ Rscript code/convert-db.R |sqlite3 bibliography.db</code></pre>
+<p>If this runs too slow, try the following instead.</p>
+<pre class="input"><code>$ Rscript code/convert-db.R |sqlite3 -cmd &quot;pragma synchronous=off&quot; bibliography.db</code></pre>
+<blockquote>
+<h2>Creating database takes too long?</h2>
+<p>The output of convert-db.R contains thousands of “insert” statement and by default, each insert statemt is treated as a transaction. SQLite might be doing only 60 transactions per second on a 7200RPM disk drive. The extra command “pragma synchronous=off” will cause SQLite to not wait on data to reach the disk surface, results in faster completion. If you lose power in the middle of a transasaction, the database file might go corrupt (but it is very unliekly)</p>
+</blockquote>
 <pre class="input"><code>$ sqlite3 bibliography.db
 SQLite version 3.8.5 2014-08-15 22:37:57
 Enter &quot;.help&quot; for usage hints.
@@ -210,18 +216,36 @@ F5DGU3Q4|Cohen, N. J.
 PNGQMCP5|Buciluǎ, Cristian
 PNGQMCP5|Caruana, Rich
 PNGQMCP5|Niculescu-Mizil, Alexandru</code></pre>
+<pre class="sql"><code>sqlite&gt; .mode column
+sqlite&gt; .header on
+sqlite&gt; select * from data limit 10;
+
+key         author             
+----------  -------------------
+8SW85SQM    McClelland, James L
+85QV9X5F    McClelland, J. L.  
+85QV9X5F    McNaughton, B. L.  
+85QV9X5F    O'Reilly, R. C.    
+Z4X6DT6N    Ratcliff, R.       
+F5DGU3Q4    McCloskey, M.      
+F5DGU3Q4    Cohen, N. J.       
+PNGQMCP5    Buciluǎ, Cristian 
+PNGQMCP5    Caruana, Rich      
+PNGQMCP5    Niculescu-Mizil, Al</code></pre>
 <p>That looks good, so let’s try asking some questions:</p>
 <pre class="sql"><code>select author, count(*) from data group by author order by count(*) desc limit 10;</code></pre>
-<pre class="output"><code>Bengio, Yoshua|122
-Bengio, Y.|111
-Hinton, Geoffrey E.|78
-LeCun, Yann|56
-Hinton, G. E.|45
-Salakhutdinov, Ruslan|34
-LeCun, Y.|31
-Vincent, Pascal|29
-Jordan, M. I.|27
-Frasconi, P.|25</code></pre>
+<pre class="output"><code>author          count(*)  
+--------------  ----------
+Bengio, Yoshua  122       
+Bengio, Y.      111       
+Hinton, Geoffr  78        
+LeCun, Yann     56        
+Hinton, G. E.   45        
+Salakhutdinov,  34        
+LeCun, Y.       31        
+Vincent, Pasca  29        
+Jordan, M. I.   27        
+Frasconi, P.    25   </code></pre>
 <p>The first thing we see is that our work has paid off: we can now find out who the most prolific authors are with a single command. The second thing we see is that we’re not done yet: “Bengio, Yoshua” and “Bengio, Y.” are almost certainly the same person, as are “LeCun, Yann” and “LeCun, Y.”. If we really want to know who has written the most papers, we’re going to have to reconcile different names for the same person.</p>
 <blockquote>
 <h2>Denormalization is the Root of Much Evil</h2>
@@ -229,16 +253,18 @@ Frasconi, P.|25</code></pre>
 </blockquote>
 <p>Instead of normalizing names, let’s see what other questions we can answer. Who has co-authored papers with whom?</p>
 <pre class="sql"><code>select a.author, b.author from data a join data b on a.key=b.key and a.author &gt; b.author limit 10;</code></pre>
-<pre class="output"><code>McNaughton, B. L.|McClelland, J. L.
-O'Reilly, R. C.|McClelland, J. L.
-O'Reilly, R. C.|McNaughton, B. L.
-McCloskey, M.|Cohen, N. J.
-Caruana, Rich|Buciluǎ, Cristian
-Niculescu-Mizil, Alexandru|Buciluǎ, Cristian
-Niculescu-Mizil, Alexandru|Caruana, Rich
-Rigamonti, Roberto|Fua, Pascal
-Rigamonti, Roberto|Lepetit, Vincent
-Sironi, Amos|Fua, Pascal</code></pre>
+<pre class="output"><code>author             author           
+-----------------  -----------------
+McNaughton, B. L.  McClelland, J. L.
+O'Reilly, R. C.    McClelland, J. L.
+O'Reilly, R. C.    McNaughton, B. L.
+McCloskey, M.      Cohen, N. J.     
+Caruana, Rich      Buciluǎ, Cristia
+Niculescu-Mizil,   Buciluǎ, Cristia
+Niculescu-Mizil,   Caruana, Rich    
+Rigamonti, Robert  Fua, Pascal      
+Rigamonti, Robert  Lepetit, Vincent 
+Sironi, Amos       Fua, Pascal  </code></pre>
 <p>(We use <code>a.author &gt; b.author</code> to ensure that each distinct pair of authors only shows up once.) What if we want to know how often different pairs of people have written together?</p>
 <pre class="sql"><code>select a.author, b.author, count(*)
 from data a join data b
@@ -246,21 +272,50 @@ on a.key=b.key and a.author &gt; b.author
 group by a.author, b.author
 order by count(*) desc
 limit 10;</code></pre>
-<pre class="output"><code>Vincent, Pascal|Bengio, Yoshua|27
-Roux, Nicolas Le|Bengio, Yoshua|20
-Delalleau, Olivier|Bengio, Yoshua|19
-Bengio, Y.|Bengio, S.|18
-Larochelle, Hugo|Bengio, Yoshua|15
-Roux, Nicolas Le|Delalleau, Olivier|15
-Vincent, P.|Bengio, Y.|15
-Chapados, N.|Bengio, Y.|14
-Gori, M.|Frasconi, P.|14
-Salakhutdinov, Ruslan|Hinton, Geoffrey E.|14</code></pre>
-<p>Again, we have a data normalization problem: the pair “Vincent, Pascal” and “Bengio, Yoshua” is almost certainly the same as the pair “Bengio, Y.” and “Bengio, S.”. But that problem would be there even if we were analyzing this data manually, and putting it in a database has made asking new questions so easy that we can do research we otherwise wouldn’t have been able to tackle. The final step is to commit our script to Git and celebrate with a nice cup of tea.</p>
+<pre class="output"><code>author           author          count(*)  
+---------------  --------------  ----------
+Vincent, Pascal  Bengio, Yoshua  27        
+Roux, Nicolas L  Bengio, Yoshua  20        
+Delalleau, Oliv  Bengio, Yoshua  19        
+Bengio, Y.       Bengio, S.      18        
+Larochelle, Hug  Bengio, Yoshua  15        
+Roux, Nicolas L  Delalleau, Oli  15        
+Vincent, P.      Bengio, Y.      15        
+Chapados, N.     Bengio, Y.      14        
+Gori, M.         Frasconi, P.    14        
+Salakhutdinov,   Hinton, Geoffr  14  </code></pre>
+<p>Again, we have a data normalization problem: the pair “Vincent, Pascal” and “Bengio, Yoshua” is almost certainly the same as the pair “Bengio, Y.” and “Bengio, S.”. But that problem would be there even if we were analyzing this data manually, and putting it in a database has made asking new questions so easy that we can do research we otherwise wouldn’t have been able to tackle.</p>
 <blockquote>
 <h2>Doing Things the Right Way</h2>
-<p>Rewrite the Python program to use the <code>sqlite3</code> library to create the database instead of <code>print</code> statements.</p>
+<p>Rewrite the R program to use the <code>sqldf</code> library to create the database instead of <code>cat</code> statements.</p>
 </blockquote>
+<p>You will need to install sqldf package.</p>
+<pre class="{r}"><code>install.packages(&quot;sqldf&quot;)</code></pre>
+<p>The revised code may look like this:</p>
+<pre class="{r}"><code>filename &lt;- &quot;/home/seb56/swc/swc_vuw2015/db/data/bibliography.csv&quot;
+bibData &lt;- read.csv(file=filename, header=FALSE,sep=&quot;,&quot;)
+library(sqldf)
+
+db&lt;-dbConnect(SQLite(),dbname=&quot;Bibliography_sqldf.sqlite&quot;)
+
+CREATE = 'create table data(key text not null, author text not null);'
+dbSendQuery(conn=db, CREATE)
+
+INSERT &lt;- &quot;insert into data values(\&quot;%s\&quot;,\&quot;%s\&quot;);&quot;
+for (i in 1:nrow(bibData)) {
+  key&lt;-bibData[i,1]
+  authors&lt;-strsplit(as.character(bibData[i,4]),&quot;; &quot;)[[1]]
+  if (length(authors)==0) {
+    authors&lt;-c('')
+  }
+  for (author in authors) {
+    cmd&lt;-sprintf(INSERT,key,author)
+    dbSendQuery(conn=db,cmd)
+  }  
+}
+
+dbDisconnect(db)
+</code></pre>
 <blockquote>
 <h2>Distinct Pairs</h2>
 <p>Explain why using <code>a.author &gt; b.author</code> ensures that distinct pairs of authors only show up once.</p>
