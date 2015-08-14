@@ -14,23 +14,28 @@ the ability to [filter](reference.html#filter) data,
 i.e.,
 to select only those records that match certain criteria.
 For example,
-suppose we want to see when a particular site was visited.
-We can select these records from the `Visited` table
+suppose we want to see the cities in New Zealand, we can select these records from the `City` table
 by using a `WHERE` clause in our query:
 
 ~~~ {.sql}
-SELECT * FROM Visited WHERE site='DR-1';
+SELECT * FROM City WHERE countrycode="NZL";
 ~~~
 
-|ident|site|dated     |
-|-----|----|----------|
-|619  |DR-1|1927-02-08|
-|622  |DR-1|1927-02-10|
-|844  |DR-1|1932-03-22|
+ID     Name                  CountryCode  District              Population
+-----  --------------------  -----------  --------------------  ----------
+3494   Auckland              NZL          Auckland              381800    
+3495   Christchurch          NZL          Canterbury            324200    
+3496   Manukau               NZL          Auckland              281800    
+3497   North Shore           NZL          Auckland              187700    
+3498   Waitakere             NZL          Auckland              170600    
+3499   Wellington            NZL          Wellington            166700    
+3500   Dunedin               NZL          Dunedin               119600    
+3501   Hamilton              NZL          Hamilton              117100    
+3502   Lower Hutt            NZL          Wellington            98100  
 
 The database manager executes this query in two stages.
 First,
-it checks at each row in the `Visited` table
+it checks at each row in the `City` table
 to see which ones satisfy the `WHERE`.
 It then uses the column names following the `SELECT` keyword
 to determine what columns to display.
@@ -40,14 +45,22 @@ we can filter records using `WHERE`
 based on values in columns that aren't then displayed:
 
 ~~~ {.sql}
-SELECT ident FROM Visited WHERE site='DR-1';
+SELECT name,population FROM City WHERE CountryCode="NZL";
 ~~~
 
-|ident|
-|-----|
-|619  |
-|622  |
-|844  |
+Name                  Population 
+--------------------  -----------
+Auckland              381800     
+Christchurch          324200     
+Manukau               281800     
+North Shore           187700     
+Waitakere             170600     
+Wellington            166700     
+Dunedin               119600     
+Hamilton              117100     
+Lower Hutt            98100 
+
+
 
 <img src="fig/sql-filter.svg" alt="SQL Filtering in Action" />
 
@@ -56,14 +69,16 @@ For example,
 we can ask for all information from the DR-1 site collected before 1930:
 
 ~~~ {.sql}
-SELECT * FROM Visited WHERE site='DR-1' AND dated<'1930-01-01';
+SELECT name,population FROM City WHERE countrycode="NZL" and population > 200000;
 ~~~
 
-|ident|site|dated     |
-|-----|----|----------|
-|619  |DR-1|1927-02-08|
-|622  |DR-1|1927-02-10|
+Name                  Population 
+--------------------  -----------
+Auckland              381800     
+Christchurch          324200     
+Manukau               281800  
 
+<!---
 > ## Date types {.callout}
 >
 > Most database managers have a special data type for dates.
@@ -85,45 +100,58 @@ SELECT * FROM Visited WHERE site='DR-1' AND dated<'1930-01-01';
 > but not nearly as complicated as figuring out
 > [historical dates in Sweden](http://en.wikipedia.org/wiki/Swedish_calendar).
 
-If we want to find out what measurements were taken by either Lake or Roerich,
-we can combine the tests on their names using `OR`:
+-->
+
+If we want to find countries either in "Autralia and New Zealand" OR in "Polynesia" region,
+we can combine the tests using `OR`:
 
 ~~~ {.sql}
-SELECT * FROM Survey WHERE person='lake' OR person='roe';
+SELECT name, population, region, headofstate FROM Country WHERE region="Australia and New Zealand" OR region="Polynesia";
 ~~~
 
-|taken|person|quant|reading|
-|-----|------|-----|-------|
-|734  |lake  |sal  |0.05   |
-|751  |lake  |sal  |0.1    |
-|752  |lake  |rad  |2.19   |
-|752  |lake  |sal  |0.09   |
-|752  |lake  |temp |-16.0  |
-|752  |roe   |sal  |41.6   |
-|837  |lake  |rad  |1.46   |
-|837  |lake  |sal  |0.21   |
-|837  |roe   |sal  |22.5   |
-|844  |roe   |rad  |11.25  |
+Name                            Population  Region                          HeadOfState                   
+------------------------------  ----------  ------------------------------  ------------------------------
+American Samoa                  68000       Polynesia                       George W. Bush                
+Australia                       18886000    Australia and New Zealand       Elisabeth II                  
+Cocos (Keeling) Islands         600         Australia and New Zealand       Elisabeth II                  
+Cook Islands                    20000       Polynesia                       Elisabeth II                  
+Christmas Island                2500        Australia and New Zealand       Elisabeth II                  
+Norfolk Island                  2000        Australia and New Zealand       Elisabeth II                  
+Niue                            2000        Polynesia                       Elisabeth II                  
+New Zealand                     3862000     Australia and New Zealand       Elisabeth II                  
+Pitcairn                        50          Polynesia                       Elisabeth II                  
+French Polynesia                235000      Polynesia                       Jacques Chirac                
+Tokelau                         2000        Polynesia                       Elisabeth II                  
+Tonga                           99000       Polynesia                       Taufa'ahau Tupou IV           
+Tuvalu                          12000       Polynesia                       Elisabeth II                  
+Wallis and Futuna               15000       Polynesia                       Jacques Chirac                
+Samoa                           180000      Polynesia                       Malietoa Tanumafili II  
 
+(Name of the queen has a wrong spell - we will fix the data later in Chapter 8)
 Alternatively,
 we can use `IN` to see if a value is in a specific set:
 
 ~~~ {.sql}
-SELECT * FROM Survey WHERE person IN ('lake', 'roe');
+SELECT name, population, region, headofstate FROM Country WHERE region IN ("Australia and New Zealand","Polynesia");
 ~~~
 
-|taken|person|quant|reading|
-|-----|------|-----|-------|
-|734  |lake  |sal  |0.05   |
-|751  |lake  |sal  |0.1    |
-|752  |lake  |rad  |2.19   |
-|752  |lake  |sal  |0.09   |
-|752  |lake  |temp |-16.0  |
-|752  |roe   |sal  |41.6   |
-|837  |lake  |rad  |1.46   |
-|837  |lake  |sal  |0.21   |
-|837  |roe   |sal  |22.5   |
-|844  |roe   |rad  |11.25  |
+Name                            Population  Region                          HeadOfState                   
+------------------------------  ----------  ------------------------------  ------------------------------
+American Samoa                  68000       Polynesia                       George W. Bush                
+Australia                       18886000    Australia and New Zealand       Elisabeth II                  
+Cocos (Keeling) Islands         600         Australia and New Zealand       Elisabeth II                  
+Cook Islands                    20000       Polynesia                       Elisabeth II                  
+Christmas Island                2500        Australia and New Zealand       Elisabeth II                  
+Norfolk Island                  2000        Australia and New Zealand       Elisabeth II                  
+Niue                            2000        Polynesia                       Elisabeth II                  
+New Zealand                     3862000     Australia and New Zealand       Elisabeth II                  
+Pitcairn                        50          Polynesia                       Elisabeth II                  
+French Polynesia                235000      Polynesia                       Jacques Chirac                
+Tokelau                         2000        Polynesia                       Elisabeth II                  
+Tonga                           99000       Polynesia                       Taufa'ahau Tupou IV           
+Tuvalu                          12000       Polynesia                       Elisabeth II                  
+Wallis and Futuna               15000       Polynesia                       Jacques Chirac                
+Samoa                           180000      Polynesia                       Malietoa Tanumafili II  
 
 We can combine `AND` with `OR`,
 but we need to be careful about which operator is executed first.
@@ -131,57 +159,94 @@ If we *don't* use parentheses,
 we get this:
 
 ~~~ {.sql}
-SELECT * FROM Survey WHERE quant='sal' AND person='lake' OR person='roe';
+SELECT name, population,region,headofstate FROM Country WHERE headofstate="Elisabeth II" AND region="Polynesia" OR region="Melanesia";
 ~~~
 
-|taken|person|quant|reading|
-|-----|------|-----|-------|
-|734  |lake  |sal  |0.05   |
-|751  |lake  |sal  |0.1    |
-|752  |lake  |sal  |0.09   |
-|752  |roe   |sal  |41.6   |
-|837  |lake  |sal  |0.21   |
-|837  |roe   |sal  |22.5   |
-|844  |roe   |rad  |11.25  |
+Name                            Population  Region                          HeadOfState                   
+------------------------------  ----------  ------------------------------  ------------------------------
+Cook Islands                    20000       Polynesia                       Elisabeth II                  
+Fiji Islands                    817000      Melanesia                       Josefa Iloilo                 
+New Caledonia                   214000      Melanesia                       Jacques Chirac                
+Niue                            2000        Polynesia                       Elisabeth II                  
+Pitcairn                        50          Polynesia                       Elisabeth II                  
+Papua New Guinea                4807000     Melanesia                       Elisabeth II                  
+Solomon Islands                 444000      Melanesia                       Elisabeth II                  
+Tokelau                         2000        Polynesia                       Elisabeth II                  
+Tuvalu                          12000       Polynesia                       Elisabeth II                  
+Vanuatu                         190000      Melanesia                       John Bani   
 
-which is salinity measurements by Lake,
-and *any* measurement by Roerich.
+which is Polynesian countries with Queen Elisabeth II as the head of state,
+and *any* Melanesian countries.
 We probably want this instead:
 
 ~~~ {.sql}
-SELECT * FROM Survey WHERE quant='sal' AND (person='lake' OR person='roe');
+SELECT name, population,region,headofstate FROM Country WHERE headofstate="Elisabeth II" AND (region="Polynesia" OR region="Melanesia");
 ~~~
 
-|taken|person|quant|reading|
-|-----|------|-----|-------|
-|734  |lake  |sal  |0.05   |
-|751  |lake  |sal  |0.1    |
-|752  |lake  |sal  |0.09   |
-|752  |roe   |sal  |41.6   |
-|837  |lake  |sal  |0.21   |
-|837  |roe   |sal  |22.5   |
+Name                            Population  Region                          HeadOfState                   
+------------------------------  ----------  ------------------------------  ------------------------------
+Cook Islands                    20000       Polynesia                       Elisabeth II                  
+Niue                            2000        Polynesia                       Elisabeth II                  
+Pitcairn                        50          Polynesia                       Elisabeth II                  
+Papua New Guinea                4807000     Melanesia                       Elisabeth II                  
+Solomon Islands                 444000      Melanesia                       Elisabeth II                  
+Tokelau                         2000        Polynesia                       Elisabeth II                  
+Tuvalu                          12000       Polynesia                       Elisabeth II
 
 We can also filter by partial matches.
 For example,
-if we want to know something just about the site names beginning with "DR" we can use the `LIKE` keyword.
-The percent symbol acts as a [wildcard](reference.html#wildcard),
-matching any characters in that place.
+if we want to know about countries in Polynesia, Melanesia, Micronesia etc., we can use `LIKE` keyword.
+The percent symbol acts as a [wildcard](reference.html#wildcard), matching any characters in that place.
 It can be used at the beginning, middle, or end of the string:
 
 ~~~ {.sql}
-SELECT * FROM Visited WHERE site LIKE 'DR%';
+SELECT name, population,region,headofstate FROM Country WHERE region LIKE "%nesia";
 ~~~
 
-|ident|site |dated     | 
-|-----|-----|----------|
-|619  |DR-1 |1927-02-08|
-|622  |DR-1 |1927-02-10|
-|734  |DR-3 |1930-01-07|
-|735  |DR-3 |1930-01-12|
-|751  |DR-3 |1930-02-26|
-|752  |DR-3 |          |
-|844  |DR-1 |1932-03-22|
+Name                            Population  Region                          HeadOfState                   
+------------------------------  ----------  ------------------------------  ------------------------------
+American Samoa                  68000       Polynesia                       George W. Bush                
+Cook Islands                    20000       Polynesia                       Elisabeth II                  
+Fiji Islands                    817000      Melanesia                       Josefa Iloilo                 
+Micronesia, Federated States o  119000      Micronesia                      Leo A. Falcam                 
+Guam                            168000      Micronesia                      George W. Bush                
+Kiribati                        83000       Micronesia                      Teburoro Tito                 
+Marshall Islands                64000       Micronesia                      Kessai Note                   
+Northern Mariana Islands        78000       Micronesia                      George W. Bush                
+New Caledonia                   214000      Melanesia                       Jacques Chirac                
+Niue                            2000        Polynesia                       Elisabeth II                  
+Nauru                           12000       Micronesia                      Bernard Dowiyogo              
+Pitcairn                        50          Polynesia                       Elisabeth II                  
+Palau                           19000       Micronesia                      Kuniwo Nakamura               
+Papua New Guinea                4807000     Melanesia                       Elisabeth II                  
+French Polynesia                235000      Polynesia                       Jacques Chirac                
+Solomon Islands                 444000      Melanesia                       Elisabeth II                  
+Tokelau                         2000        Polynesia                       Elisabeth II                  
+Tonga                           99000       Polynesia                       Taufa'ahau Tupou IV           
+Tuvalu                          12000       Polynesia                       Elisabeth II                  
+Vanuatu                         190000      Melanesia                       John Bani                     
+Wallis and Futuna               15000       Polynesia                       Jacques Chirac                
+Samoa                           180000      Polynesia                       Malietoa Tanumafili II        
 
+
+~~~ {.sql}
+SELECT name, population,region,headofstate FROM Country WHERE region LIKE "M%nesia";
+~~~
+
+Name                            Population  Region                          HeadOfState                   
+------------------------------  ----------  ------------------------------  ------------------------------
+Fiji Islands                    817000      Melanesia                       Josefa Iloilo                 
+Micronesia, Federated States o  119000      Micronesia                      Leo A. Falcam                 
+Guam                            168000      Micronesia                      George W. Bush                
+Kiribati                        83000       Micronesia                      Teburoro Tito                 
+Marshall Islands                64000       Micronesia                      Kessai Note                   
+Northern Mariana Islands        78000       Micronesia                      George W. Bush                
+New Caledonia                   214000      Melanesia                       Jacques Chirac                
+Nauru                           12000       Micronesia                      Bernard Dowiyogo              
+Palau                           19000       Micronesia                      Kuniwo Nakamura               
+Papua New Guinea                4807000     Melanesia                       Elisabeth II                  
+Solomon Islands                 444000      Melanesia                       Elisabeth II                  
+Vanuatu                         190000      Melanesia                       John Bani                 
 
 
 
@@ -190,16 +255,23 @@ we can use `DISTINCT` with `WHERE`
 to give a second level of filtering:
 
 ~~~ {.sql}
-SELECT DISTINCT person, quant FROM Survey WHERE person='lake' OR person='roe';
+SELECT DISTINCT headofstate FROM Country WHERE region LIKE "%nesia";
 ~~~
 
-|person|quant|
-|------|-----|
-|lake  |sal  |
-|lake  |rad  |
-|lake  |temp |
-|roe   |sal  |
-|roe   |rad  |
+HeadOfState                   
+------------------------------
+George W. Bush                
+Elisabeth II                  
+Josefa Iloilo                 
+Leo A. Falcam                 
+Teburoro Tito                 
+Kessai Note                   
+Jacques Chirac                
+Bernard Dowiyogo              
+Kuniwo Nakamura               
+Taufa'ahau Tupou IV           
+John Bani                     
+Malietoa Tanumafili II     
 
 But remember:
 `DISTINCT` is applied to the values displayed in the chosen columns,
@@ -226,11 +298,12 @@ not to the entire rows as they are being processed.
 
 > ## Fix This Query {.challenge}
 >
-> Suppose we want to select all sites that lie more than 30 degrees from the poles.
+> Suppose we want to select all countries whose population is between 3 million and 4 million.
 > Our first query is:
 >
 > ~~~ {.sql}
-> SELECT * FROM Site WHERE (lat > -60) OR (lat < 60);
+> SELECT name, population,region FROM Country WHERE population > 3000000 OR population < 4000000;
+
 > ~~~
 >
 > Explain why this is wrong,
@@ -238,9 +311,8 @@ not to the entire rows as they are being processed.
 
 > ## Finding Outliers {.challenge}
 >
-> Normalized salinity readings are supposed to be between 0.0 and 1.0.
-> Write a query that selects all records from `Survey`
-> with salinity values outside this range.
+> Write a query that selects records from Country with population of 0.
+> Do they make sense?
 
 > ## Matching Patterns {.challenge}
 >
