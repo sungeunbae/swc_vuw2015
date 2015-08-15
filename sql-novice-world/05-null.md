@@ -17,70 +17,71 @@ it is a one-of-a-kind value that means "nothing here".
 Dealing with `null` requires a few special tricks
 and some careful thinking.
 
-To start,
-let's have a look at the `Visited` table.
-There are eight records,
-but #752 doesn't have a date --- or rather,
-its date is null:
+To start, let's have a look at what the following query returns.
 
 ~~~ {.sql}
-SELECT * FROM Visited;
+SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia";
 ~~~
 
-|ident|site|dated     |
-|-----|----|----------|
-|619  |DR-1|1927-02-08|
-|622  |DR-1|1927-02-10|
-|734  |DR-3|1930-01-07|
-|735  |DR-3|1930-01-12|
-|751  |DR-3|1930-02-26|
-|752  |DR-3|-null-    |
-|837  |MSK-|1932-01-14|
-|844  |DR-1|1932-03-22|
+Name                            Population  LifeExpectancy 
+------------------------------  ----------  ---------------
+American Samoa                  68000       75.1           
+Cook Islands                    20000       71.1           
+Niue                            2000                       
+Pitcairn                        50                         
+French Polynesia                235000      74.8           
+Tokelau                         2000                       
+Tonga                           99000       67.9           
+Tuvalu                          12000       66.3           
+Wallis and Futuna               15000                      
+Samoa                           180000      69.2   
+
+
+There are 10 records, but 4 records don't have LifeExpectancy --- or rather, they have null values.
 
 Null doesn't behave like other values.
-If we select the records that come before 1930:
+If we select the records with LifeExpectancy below 70:
 
 ~~~ {.sql}
-SELECT * FROM Visited WHERE dated<'1930-01-01';
+SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia" AND lifeexpectancy < 70;
 ~~~
 
-|ident|site|dated     |
-|-----|----|----------|
-|619  |DR-1|1927-02-08|
-|622  |DR-1|1927-02-10|
+Name                            Population  LifeExpectancy 
+------------------------------  ----------  ---------------
+Tonga                           99000       67.9           
+Tuvalu                          12000       66.3           
+Samoa                           180000      69.2
 
-we get two results,
-and if we select the ones that come during or after 1930:
+we get 3 results,
+and if we select the ones with life expencanty higher than 70:
 
 ~~~ {.sql}
-SELECT * FROM Visited WHERE dated>='1930-01-01';
+SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia" AND lifeexpectancy >= 70;
 ~~~
 
-|ident|site|dated     |
-|-----|----|----------|
-|734  |DR-3|1930-01-07|
-|735  |DR-3|1930-01-12|
-|751  |DR-3|1930-02-26|
-|837  |MSK-|1932-01-14|
-|844  |DR-1|1932-03-22|
+Name                            Population  LifeExpectancy 
+------------------------------  ----------  ---------------
+American Samoa                  68000       75.1           
+Cook Islands                    20000       71.1           
+French Polynesia                235000      74.8   
 
-we get five,
-but record #752 isn't in either set of results.
+we get 3,
+but those records with null life expentancy aren't in either set of results.
+
 The reason is that
-`null<'1930-01-01'`
+`null< 70`
 is neither true nor false:
 null means, "We don't know,"
 and if we don't know the value on the left side of a comparison,
 we don't know whether the comparison is true or false.
 Since databases represent "don't know" as null,
-the value of `null<'1930-01-01'`
+the value of `null< 70`
 is actually `null`.
-`null>='1930-01-01'` is also null
+`null>=70` is also null
 because we can't answer to that question either.
 And since the only records kept by a `WHERE`
 are those for which the test is true,
-record #752 isn't included in either set of results.
+these 4 records aren't included in either set of results.
 
 Comparisons aren't the only operations that behave this way with nulls.
 `1+null` is `null`,
@@ -91,91 +92,95 @@ In particular,
 comparing things to null with = and != produces null:
 
 ~~~ {.sql}
-SELECT * FROM Visited WHERE dated=NULL;
+SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia" AND lifeexpectancy = NULL;
 ~~~
 
 produces no output, and neither does:
 
 ~~~ {.sql}
-SELECT * FROM Visited WHERE dated!=NULL;
+SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia" AND lifeexpectancy != NULL;
 ~~~
 
 To check whether a value is `null` or not,
 we must use a special test `IS NULL`:
 
 ~~~ {.sql}
-SELECT * FROM Visited WHERE dated IS NULL;
+SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia" AND lifeexpectancy IS NULL;
 ~~~
 
-|ident|site|dated     |
-|-----|----|----------|
-|752  |DR-3|-null-    |
+Name                            Population  LifeExpectancy 
+------------------------------  ----------  ---------------
+Niue                            2000                       
+Pitcairn                        50                         
+Tokelau                         2000                       
+Wallis and Futuna               15000   
 
 or its inverse `IS NOT NULL`:
 
 ~~~ {.sql}
-SELECT * FROM Visited WHERE dated IS NOT NULL;
+SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia" AND lifeexpectancy IS NOT NULL;
 ~~~
 
-|ident|site|dated     |
-|-----|----|----------|
-|619  |DR-1|1927-02-08|
-|622  |DR-1|1927-02-10|
-|734  |DR-3|1930-01-07|
-|735  |DR-3|1930-01-12|
-|751  |DR-3|1930-02-26|
-|837  |MSK-|1932-01-14|
-|844  |DR-1|1932-03-22|
+Name                            Population  LifeExpectancy 
+------------------------------  ----------  ---------------
+American Samoa                  68000       75.1           
+Cook Islands                    20000       71.1           
+French Polynesia                235000      74.8           
+Tonga                           99000       67.9           
+Tuvalu                          12000       66.3           
+Samoa                           180000      69.2           
+sqlite> 
+
 
 Null values can cause headaches wherever they appear.
-For example,
-suppose we want to find all the salinity measurements
-that weren't taken by Lake.
+For example, from the next query result, we wish to find records that are not represented by "Elisabeth II" as the head of state.
+
+~~~ {.sql}
+SELECT name, headofstate,surfacearea FROM country WHERE region="Antarctica";
+~~~
+
+Name                            HeadOfStat  SurfaceArea    
+------------------------------  ----------  ---------------
+Antarctica                                  13120000.0     
+French Southern territories     Jacques Ch  7780.0         
+Bouvet Island                   Harald V    59.0           
+Heard Island and McDonald Isla  Elisabeth   359.0          
+South Georgia and the South Sa  Elisabeth   3903.0 
+
 It's natural to write the query like this:
 
 ~~~ {.sql}
-SELECT * FROM Survey WHERE quant='sal' AND person!='lake';
+SELECT name, headofstate,surfacearea FROM country WHERE region="Antarctica" AND headofstate!="Elisabeth II";
 ~~~
 
-|taken|person|quant|reading|
-|-----|------|-----|-------|
-|619  |dyer  |sal  |0.13   |
-|622  |dyer  |sal  |0.09   |
-|752  |roe   |sal  |41.6   |
-|837  |roe   |sal  |22.5   |
+Name                            HeadOfStat  SurfaceArea    
+------------------------------  ----------  ---------------
+French Southern territories     Jacques Ch  7780.0         
+Bouvet Island                   Harald V    59.0    
 
-but this query filters omits the records
-where we don't know who took the measurement.
-Once again,
-the reason is that when `person` is `null`,
+but this query filters omits the record of Antactica because its head of state is `null` and 
 the `!=` comparison produces `null`,
 so the record isn't kept in our results.
 If we want to keep these records
 we need to add an explicit check:
 
 ~~~ {.sql}
-SELECT * FROM Survey WHERE quant='sal' AND (person!='lake' OR person IS NULL);
+SELECT name, headofstate,surfacearea FROM country WHERE region="Antarctica" AND (headofstate!="Elisabeth II" OR headofstate IS NULL);
 ~~~
 
-|taken|person|quant|reading|
-|-----|------|-----|-------|
-|619  |dyer  |sal  |0.13   |
-|622  |dyer  |sal  |0.09   |
-|735  |-null-|sal  |0.06   |
-|752  |roe   |sal  |41.6   |
-|837  |roe   |sal  |22.5   |
+Name                            HeadOfStat  SurfaceArea    
+------------------------------  ----------  ---------------
+Antarctica                                  13120000.0     
+French Southern territories     Jacques Ch  7780.0         
+Bouvet Island                   Harald V    59.0 
 
-We still have to decide whether this is the right thing to do or not.
-If we want to be absolutely sure that
-we aren't including any measurements by Lake in our results,
-we need to exclude all the records for which we don't know who did the work.
 
 In contrast to arithmetic or Boolean operators, aggregation functions that combine multiple values, such as `min`, `max` or `avg`, *ignore* `null` values. In the majority of cases, this is a desirable output: for example, unknown values are thus not affecting our data when we are averaging it. Aggregation functions will be addressed in more detail in [the next section](06-agg.html).
 
 > ## Sorting by Known Date {.challenge}
 >
-> Write a query that sorts the records in `Visited` by date,
-> omitting entries for which the date is not known
+> Write a query that sorts the records of Polynesian countries (show name, population and life expectancy only) by life expectancy,
+> omitting entries for which the life expectancy is not known
 > (i.e., is null).
 
 > ## NULL in a Set {.challenge}
@@ -183,7 +188,7 @@ In contrast to arithmetic or Boolean operators, aggregation functions that combi
 > What do you expect the query:
 >
 > ~~~ {.sql}
-> SELECT * FROM Visited WHERE dated IN ('1927-02-08', NULL);
+> SELECT name, headofstate,surfacearea FROM country WHERE region="Antarctica" AND headofstate IN ("Elisabeth II", NULL);
 > ~~~
 >
 > to produce?
@@ -195,8 +200,7 @@ In contrast to arithmetic or Boolean operators, aggregation functions that combi
 > a [sentinel value](reference.html#sentinel-value))
 > to mark missing data rather than `null`.
 > For example,
-> they will use the date "0000-00-00" to mark a missing date,
-> or -1.0 to mark a missing salinity or radiation reading
-> (since actual readings cannot be negative).
+> they will use -1.0 for missing life expectancy (since alcutal life expectancy cannot be negative)
+> or "N/A" to mark a missing head of state
 > What does this simplify?
 > What burdens or risks does it introduce?
