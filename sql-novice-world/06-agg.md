@@ -12,22 +12,25 @@ minutes: 30
 > *   Explain how missing data is handled during aggregation.
 
 We now want to calculate ranges and averages for our data.
-We know how to select all of the dates from the `Visited` table:
+Let's examine the output of the query.
 
-~~~ {.sql}
-SELECT dated FROM Visited;
+~~~{.sql}
+SELECT lifeexpectancy FROM country WHERE region="Polynesia";
 ~~~
 
-|dated     |
-|----------|
-|1927-02-08|
-|1927-02-10|
-|1930-01-07|
-|1930-01-12|
-|1930-02-26|
-|-null-    |
-|1932-01-14|
-|1932-03-22|
+|LifeExpectancy|
+|--------------|
+|75.1          |                
+|71.1          |
+|              |
+|              |
+|74.8          |
+|              |
+|67.9          |
+|66.3          |
+|              |
+|69.2          |
+
 
 but to combine them,
 we must use an [aggregation function](reference.html#aggregation-function)
@@ -36,136 +39,119 @@ Each of these functions takes a set of records as input,
 and produces a single record as output:
 
 ~~~ {.sql}
-SELECT min(dated) FROM Visited;
+SELECT min(lifeexpectancy) FROM country WHERE region="Polynesia";
 ~~~
 
-|min(dated)|
-|----------|
-|1927-02-08|
+|min(lifeexpectancy)|
+|-------------------|
+|66.3               |
+
 
 <img src="fig/sql-aggregation.svg" alt="SQL Aggregation" />
 
 ~~~ {.sql}
-SELECT max(dated) FROM Visited;
+SELECT max(lifeexpectancy) FROM country WHERE region="Polynesia";
 ~~~
 
-|max(dated)|
-|----------|
-|1932-03-22|
+|max(lifeexpectancy)|
+|-------------------|
+|75.1               |
 
-`min` and `max` are just two of
-the aggregation functions built into SQL.
-Three others are `avg`,
-`count`,
-and `sum`:
+`min` and `max` are just two of the aggregation functions built into SQL.
+Three others are `avg`,`count`,and `sum`:
 
 ~~~ {.sql}
-SELECT avg(reading) FROM Survey WHERE quant='sal';
+SELECT avg(lifeexpectancy) FROM country WHERE region="Polynesia";
 ~~~
 
-|avg(reading)    |
-|----------------|
-|7.20333333333333|
+|avg(lifeexpectancy)|
+|-------------------|
+|70.7333333333333   |
+
+~~~{.sql}
+SELECT count(lifeexpectancy) FROM country WHERE region="Polynesia";
+~~~
+
+|count(lifeexpectanc|
+|-------------------|
+|6                  |
+
+We used `count(lifeexpectancy)` here.
+Note that the records with null life expectancy were *ignored*. This is a very useful feature.
+In fact, `avg(lifeexpectancy)` above was computed by adding all non-null values and division by 6.
+
+If we counted other files like `name` or any other field in the table,
+or even used `count(*)`, the result will be different
+
+~~~{.sql}
+SELECT count(*) FROM country WHERE region="Polynesia";
+~~~
+
+|count(*)           |
+|-------------------|
+|10                 |
+
+~~~{.sql}
+SELECT count(name) FROM country WHERE region="Polynesia";
+~~~
+
+|count(name)        |
+|-------------------|
+|10                 |
+
+
 
 ~~~ {.sql}
-SELECT count(reading) FROM Survey WHERE quant='sal';
+SELECT sum(lifeexpectancy) FROM country WHERE region="Polynesia";
 ~~~
 
-|count(reading)|
-|--------------|
-|9             |
+|sum(lifeexpectancy)|
+|-------------------|
+|424.4              |
 
-~~~ {.sql}
-SELECT sum(reading) FROM Survey WHERE quant='sal';
-~~~
-
-|sum(reading)|
-|------------|
-|64.83       |
-
-We used `count(reading)` here,
-but we could just as easily have counted `quant`
-or any other field in the table,
-or even used `count(*)`,
-since the function doesn't care about the values themselves,
-just how many values there are.
 
 SQL lets us do several aggregations at once.
-We can,
-for example,
-find the range of sensible salinity measurements:
+We can, for example, find the total population and average life expectancy in Polynesian countries.
 
 ~~~ {.sql}
-SELECT min(reading), max(reading) FROM Survey WHERE quant='sal' AND reading<=1.0;
-~~~
+SELECT sum(population),avg(lifeexpectancy) FROM country WHERE region="Polynesia";
 
-|min(reading)|max(reading)|
-|------------|------------|
-|0.05        |0.21        |
+sum(population)      avg(lifeex
+-------------------  ----------
+633050               70.7333333
+
 
 We can also combine aggregated results with raw results,
 although the output might surprise you:
 
 ~~~ {.sql}
-SELECT person, count(*) FROM Survey WHERE quant='sal' AND reading<=1.0;
+SELECT name, sum(population),avg(lifeexpectancy) FROM country WHERE region="Polynesia";
 ~~~
 
-|person|count(\*)|
-|------|--------|
-|lake  |7       |
+Name                 sum(popula  avg(lifeexpecta
+-------------------  ----------  ---------------
+Samoa                633050      70.733333333333
 
-Why does Lake's name appear rather than Roerich's or Dyer's?
+
+Why does Samoa appear? 
 The answer is that when it has to aggregate a field,
-but isn't told how to,
-the database manager chooses an actual value from the input set.
-It might use the first one processed,
-the last one,
-or something else entirely.
+but isn't told how to, the database manager chooses a random value from the input set.
 
 Another important fact is that when there are no values to aggregate --- for example, where there are no rows satisfying the `WHERE` clause ---
 aggregation's result is "don't know"
 rather than zero or some other arbitrary value:
 
 ~~~ {.sql}
-SELECT person, max(reading), sum(reading) FROM Survey WHERE quant='missing';
+SELECT name, sum(population),avg(lifeexpectancy) FROM country WHERE region="Polynesia" AND lifeexpectancy IS NULL;
 ~~~
 
-|person|max(reading)|sum(reading)|
-|------|------------|------------|
-|-null-|-null-      |-null-      |
+Name                 sum(popula  avg(lifeexpecta
+-------------------  ----------  ---------------
+Wallis and Futuna    19050                      
 
-One final important feature of aggregation functions is that
-they are inconsistent with the rest of SQL in a very useful way.
-If we add two values,
-and one of them is null,
-the result is null.
-By extension,
-if we use `sum` to add all the values in a set,
-and any of those values are null,
-the result should also be null.
-It's much more useful,
-though,
-for aggregation functions to ignore null values
-and only combine those that are non-null.
-This behavior lets us write our queries as:
+Here, average life expectancy is all NULL because there was no values to aggregate.
 
-~~~ {.sql}
-SELECT min(dated) FROM Visited;
-~~~
 
-|min(dated)|
-|----------|
-|1927-02-08|
-
-instead of always having to filter explicitly:
-
-~~~ {.sql}
-SELECT min(dated) FROM Visited WHERE dated IS NOT NULL;
-~~~
-
-|min(dated)|
-|----------|
-|1927-02-08|
 
 Aggregating all records at once doesn't always make sense.
 For example,
