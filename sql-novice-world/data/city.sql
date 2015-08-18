@@ -13,6 +13,7 @@ CREATE TABLE `City` (
   `District` char(20) NOT NULL DEFAULT '',
   `Population` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
+  FOREIGN KEY(`CountryCode`) REFERENCES Country(`Code`)
 );
 
 --

@@ -20,7 +20,7 @@ and some careful thinking.
 To start, let's have a look at what the following query returns.
 
 ~~~ {.sql}
-SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia";
+SELECT name,population,lifeexpectancy FROM Country WHERE region="Polynesia";
 ~~~
 
 Name                            Population  LifeExpectancy 
@@ -43,7 +43,7 @@ Null doesn't behave like other values.
 If we select the records with LifeExpectancy below 70:
 
 ~~~ {.sql}
-SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia" AND lifeexpectancy < 70;
+SELECT name,population,lifeexpectancy FROM Country WHERE region="Polynesia" AND lifeexpectancy < 70;
 ~~~
 
 Name                            Population  LifeExpectancy 
@@ -56,7 +56,7 @@ we get 3 results,
 and if we select the ones with life expencanty higher than 70:
 
 ~~~ {.sql}
-SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia" AND lifeexpectancy >= 70;
+SELECT name,population,lifeexpectancy FROM Country WHERE region="Polynesia" AND lifeexpectancy >= 70;
 ~~~
 
 Name                            Population  LifeExpectancy 
@@ -92,20 +92,20 @@ In particular,
 comparing things to null with = and != produces null:
 
 ~~~ {.sql}
-SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia" AND lifeexpectancy = NULL;
+SELECT name,population,lifeexpectancy FROM Country WHERE region="Polynesia" AND lifeexpectancy = NULL;
 ~~~
 
 produces no output, and neither does:
 
 ~~~ {.sql}
-SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia" AND lifeexpectancy != NULL;
+SELECT name,population,lifeexpectancy FROM Country WHERE region="Polynesia" AND lifeexpectancy != NULL;
 ~~~
 
 To check whether a value is `null` or not,
 we must use a special test `IS NULL`:
 
 ~~~ {.sql}
-SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia" AND lifeexpectancy IS NULL;
+SELECT name,population,lifeexpectancy FROM Country WHERE region="Polynesia" AND lifeexpectancy IS NULL;
 ~~~
 
 Name                            Population  LifeExpectancy 
@@ -118,7 +118,7 @@ Wallis and Futuna               15000
 or its inverse `IS NOT NULL`:
 
 ~~~ {.sql}
-SELECT name,population,lifeexpectancy FROM country WHERE region="Polynesia" AND lifeexpectancy IS NOT NULL;
+SELECT name,population,lifeexpectancy FROM Country WHERE region="Polynesia" AND lifeexpectancy IS NOT NULL;
 ~~~
 
 Name                            Population  LifeExpectancy 
@@ -136,7 +136,7 @@ Null values can cause headaches wherever they appear.
 For example, from the next query result, we wish to find records that are not represented by "Elisabeth II" as the head of state.
 
 ~~~ {.sql}
-SELECT name, headofstate,surfacearea FROM country WHERE region="Antarctica";
+SELECT name, headofstate,surfacearea FROM Country WHERE region="Antarctica";
 ~~~
 
 Name                            HeadOfStat  SurfaceArea    
@@ -150,7 +150,7 @@ South Georgia and the South Sa  Elisabeth   3903.0
 It's natural to write the query like this:
 
 ~~~ {.sql}
-SELECT name, headofstate,surfacearea FROM country WHERE region="Antarctica" AND headofstate!="Elisabeth II";
+SELECT name, headofstate,surfacearea FROM Country WHERE region="Antarctica" AND headofstate!="Elisabeth II";
 ~~~
 
 Name                            HeadOfStat  SurfaceArea    
@@ -165,7 +165,7 @@ If we want to keep these records
 we need to add an explicit check:
 
 ~~~ {.sql}
-SELECT name, headofstate,surfacearea FROM country WHERE region="Antarctica" AND (headofstate!="Elisabeth II" OR headofstate IS NULL);
+SELECT name, headofstate,surfacearea FROM Country WHERE region="Antarctica" AND (headofstate!="Elisabeth II" OR headofstate IS NULL);
 ~~~
 
 Name                            HeadOfStat  SurfaceArea    
@@ -188,7 +188,7 @@ In contrast to arithmetic or Boolean operators, aggregation functions that combi
 > What do you expect the query:
 >
 > ~~~ {.sql}
-> SELECT name, headofstate,surfacearea FROM country WHERE region="Antarctica" AND headofstate IN ("Elisabeth II", NULL);
+> SELECT name, headofstate,surfacearea FROM Country WHERE region="Antarctica" AND headofstate IN ("Elisabeth II", NULL);
 > ~~~
 >
 > to produce?

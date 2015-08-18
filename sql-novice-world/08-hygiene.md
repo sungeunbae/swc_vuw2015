@@ -17,35 +17,28 @@ minutes: 30
 Now that we have seen how joins work,
 we can see why the relational model is so useful
 and how best to use it.
+
 The first rule is that every value should be [atomic](reference.html#atomic),
 i.e.,
 not contain parts that we might want to work with separately.
-We store personal and family names in separate columns instead of putting the entire name in one column
-so that we don't have to use substring operations to get the name's components.
-More importantly,
-we store the two parts of the name separately because splitting on spaces is unreliable:
+For example, if we store a person's name, we should store personal and family names in separate columns instead of putting the entire name in one column so that we don't have to use substring operations to get the name's components.
+More importantly, we store the two parts of the name separately because splitting on spaces is unreliable:
 just think of a name like "Eloise St. Cyr" or "Jan Mikkel Steubart".
 
 The second rule is that every record should have a unique primary key.
 This can be a serial number that has no intrinsic meaning,
-one of the values in the record (like the `ident` field in the `Person` table),
+one of the values in the record (like the `ID` field in the `City` table),
 or even a combination of values:
-the triple `(taken, person, quant)` from the `Survey` table uniquely identifies every measurement.
+the pair `(countrycode, language)` from the `CountryLanguage` table uniquely identifies every record.
 
 The third rule is that there should be no redundant information.
 For example,
-we could get rid of the `Site` table and rewrite the `Visited` table like this:
+we could get rid of the `CountryLanguage` table and rewrite the `Country` table like this (showing only "New Zealand" here)
 
-|ident|lat   |long   |dated      |
-|-----|------|-------|-----------|
-|619  |-49.85|-128.57| 1927-02-08|
-|622  |-49.85|-128.57| 1927-02-10|
-|734  |-47.15|-126.72| 1930-01-07|
-|735  |-47.15|-126.72| 1930-01-12|
-|751  |-47.15|-126.72| 1930-02-26|
-|752  |-47.15|-126.72| -null-    |
-|837  |-48.87|-123.40| 1932-01-14|
-|844  |-49.85|-128.57| 1932-03-22|
+Code                            Name                  Continent             Region                          SurfaceAre  IndepYear   Population  LifeExpectancy  GNP         GNPOld      LocalName             GovernmentForm           HeadOfState   Capital     Code2       CountryCode  Language    IsOfficial  Percentage
+------------------------------  --------------------  --------------------  ------------------------------  ----------  ----------  ----------  --------------  ----------  ----------  --------------------  -----------------------  ------------  ----------  ----------  -----------  ----------  ----------  ----------
+NZL                             New Zealand           Oceania               Australia and New Zealand       270534.0    1907        3862000     77.8            54669.0     64960.0     New Zealand/Aotearoa  Constitutional Monarchy  Elisabeth II  3499        NZ          NZL          English     T           87.0      
+NZL                             New Zealand           Oceania               Australia and New Zealand       270534.0    1907        3862000     77.8            54669.0     64960.0     New Zealand/Aotearoa  Constitutional Monarchy  Elisabeth II  3499        NZ          NZL          Maori       F           4.3   
 
 In fact,
 we could use a single table that recorded all the information about each reading in each row,
@@ -58,19 +51,8 @@ we may have to guess which records to change,
 since other sites may also have been visited on that date.
 
 The fourth rule is that the units for every value should be stored explicitly.
-Our database doesn't do this,
-and that's a problem:
-Roerich's salinity measurements are several orders of magnitude larger than anyone else's,
-but we don't know if that means she was using parts per million instead of parts per thousand,
-or whether there actually was a saline anomaly at that site in 1932.
-
-Stepping back,
-data and the tools used to store it have a symbiotic relationship:
-we use tables and joins because it's efficient,
-provided our data is organized a certain way,
-but organize our data that way because we have tools to manipulate it efficiently.
-As anthropologists say,
-the tool shapes the hand that shapes the tool.
+Our database doesn't do this, and that's a problem:
+For example, `GNP` in `Country` table is given in unit of million dollars. New Zealand's GNP, 54669.0 must be interpreted as 54,669,000,000 dollars. However, it is not explicitly mandated and someone may enter a record in full amount instead of truncating six decimal places. We can guarantee the integrity of our data if this ever happens.
 
 > ## Identifying Atomic Values {.challenge}
 >

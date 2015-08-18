@@ -11,85 +11,158 @@ minutes: 30
 > *   Write queries that join tables on equal keys.
 > *   Explain what primary and foreign keys are, and why they are useful.
 
-In order to submit her data to a web site
-that aggregates historical meteorological data,
-Gina needs to format it as
-latitude, longitude, date, quantity, and reading.
-However,
-her latitudes and longitudes are in the `Site` table,
-while the dates of measurements are in the `Visited` table
-and the readings themselves are in the `Survey` table.
-She needs to combine these tables somehow.
+So far we left the `CountryLanguage` alone. Let's have a look at it.
+
+~~~{.sql}
+SELECT * FROM CountryLanguage LIMIT 10;
+~~~~
+
+CountryCode  Language    IsOfficial  Percentage
+-----------  ----------  ----------  ----------
+ABW          Dutch       T           5.3       
+ABW          English     F           9.5       
+ABW          Papiamento  F           76.7      
+ABW          Spanish     F           7.4       
+AFG          Balochi     F           0.9       
+AFG          Dari        T           32.1      
+AFG          Pashto      T           52.4      
+AFG          Turkmenian  F           1.9       
+AFG          Uzbek       F           8.8       
+AGO          Ambo        F           2.4 
+
+This table gives languages spoken in each country. However, country name is not kept here. Each country is distingusied by `CountryCode`. Of course, we know this `CountryCode` matches `code` field in `Country` table.
+
+~~~{.sql}
+SELECT Code,Name FROM Country LIMIT 10;
+~~~
+
+Code        Name      
+----------  ----------
+ABW         Aruba     
+AFG         Afghanista
+AGO         Angola    
+AIA         Anguilla  
+ALB         Albania   
+AND         Andorra   
+ANT         Netherland
+ARE         United Ara
+ARG         Argentina 
+ARM         Armenia   
+
+To display the country name and the languages spoken by each contry, we need to combine these tables somehow.
 
 The SQL command to do this is `JOIN`.
 To see how it works,
-let's start by joining the `Site` and `Visited` tables:
+let's start by joining the `Country` and `CountryLanguage` tables: 
 
-~~~ {.sql}
-SELECT * FROM Site JOIN Visited;
+(Press Ctrl+C as soon as you enter the following query)
+
+~~~{.sql}
+SELECT * FROM Country JOIN CountryLanguage;
 ~~~
 
-|name |lat   |long   |ident|site  |dated     |
-|-----|------|-------|-----|------|----------|
-|DR-1 |-49.85|-128.57|619  |DR-1  |1927-02-08|
-|DR-1 |-49.85|-128.57|622  |DR-1  |1927-02-10|
-|DR-1 |-49.85|-128.57|734  |DR-3  |1930-01-07|
-|DR-1 |-49.85|-128.57|735  |DR-3  |1930-01-12|
-|DR-1 |-49.85|-128.57|751  |DR-3  |1930-02-26|
-|DR-1 |-49.85|-128.57|752  |DR-3  |-null-    |
-|DR-1 |-49.85|-128.57|837  |MSK-4 |1932-01-14|
-|DR-1 |-49.85|-128.57|844  |DR-1  |1932-03-22|
-|DR-3 |-47.15|-126.72|619  |DR-1  |1927-02-08|
-|DR-3 |-47.15|-126.72|622  |DR-1  |1927-02-10|
-|DR-3 |-47.15|-126.72|734  |DR-3  |1930-01-07|
-|DR-3 |-47.15|-126.72|735  |DR-3  |1930-01-12|
-|DR-3 |-47.15|-126.72|751  |DR-3  |1930-02-26|
-|DR-3 |-47.15|-126.72|752  |DR-3  |-null-    |
-|DR-3 |-47.15|-126.72|837  |MSK-4 |1932-01-14|
-|DR-3 |-47.15|-126.72|844  |DR-1  |1932-03-22|
-|MSK-4|-48.87|-123.4 |619  |DR-1  |1927-02-08|
-|MSK-4|-48.87|-123.4 |622  |DR-1  |1927-02-10|
-|MSK-4|-48.87|-123.4 |734  |DR-3  |1930-01-07|
-|MSK-4|-48.87|-123.4 |735  |DR-3  |1930-01-12|
-|MSK-4|-48.87|-123.4 |751  |DR-3  |1930-02-26|
-|MSK-4|-48.87|-123.4 |752  |DR-3  |-null-    |
-|MSK-4|-48.87|-123.4 |837  |MSK-4 |1932-01-14|
-|MSK-4|-48.87|-123.4 |844  |DR-1  |1932-03-22|
+This will produce enormous amount of output, which is omitted here.
 
-`JOIN` creates
-the [cross product](reference.html#cross-product)
-of two tables,
-i.e.,
-it joins each record of one table with each record of the other table
-to give all possible combinations.
-Since there are three records in `Site`
-and eight in `Visited`,
-the join's output has 24 records (3 * 8 = 24) .
-And since each table has three fields,
-the output has six fields (3 + 3 = 6).
+
+`JOIN` creates the [cross product](reference.html#cross-product) of two tables,
+i.e., it joins each record of one table with each record of the other table to give all possible combinations.
+Since there are 239 records in `Country`
+and 984 in `CountryLanguage`,
+the join's output has 235,176 records (239 * 984 = 235,176).
+And since `Country` table has 15 fields, and `CountryLanguage` table has 4 fields,
+the output has 19 fields (15 + 4 = 19).
+
+Let's only select relevant fields and select first 30 records.
+
+~~~{.sql}
+SELECT Country.code, Country.name, CountryLanguage.countrycode, CountryLanguage.language 
+FROM Country 
+JOIN CountryLanguage 
+LIMIT 30;
+
+~~~
+
+Code  Name                            Coun  Language                      
+----  ------------------------------  ----  ------------------------------
+ABW   Aruba                           ABW   Dutch                         
+ABW   Aruba                           ABW   English                       
+ABW   Aruba                           ABW   Papiamento                    
+ABW   Aruba                           ABW   Spanish                       
+ABW   Aruba                           AFG   Balochi                       
+ABW   Aruba                           AFG   Dari                          
+ABW   Aruba                           AFG   Pashto                        
+ABW   Aruba                           AFG   Turkmenian                    
+ABW   Aruba                           AFG   Uzbek                         
+ABW   Aruba                           AGO   Ambo                          
+ABW   Aruba                           AGO   Chokwe                        
+ABW   Aruba                           AGO   Kongo                         
+ABW   Aruba                           AGO   Luchazi                       
+ABW   Aruba                           AGO   Luimbe-nganguela              
+ABW   Aruba                           AGO   Luvale                        
+ABW   Aruba                           AGO   Mbundu                        
+ABW   Aruba                           AGO   Nyaneka-nkhumbi               
+ABW   Aruba                           AGO   Ovimbundu                     
+ABW   Aruba                           AIA   English                       
+ABW   Aruba                           ALB   Albaniana                     
+ABW   Aruba                           ALB   Greek                         
+ABW   Aruba                           ALB   Macedonian                    
+ABW   Aruba                           AND   Catalan                       
+ABW   Aruba                           AND   French                        
+ABW   Aruba                           AND   Portuguese                    
+ABW   Aruba                           AND   Spanish                       
+ABW   Aruba                           ANT   Dutch                         
+ABW   Aruba                           ANT   English                       
+ABW   Aruba                           ANT   Papiamento                    
+ABW   Aruba                           ARE   Arabic    
+
 
 What the join *hasn't* done is
 figure out if the records being joined have anything to do with each other.
+
 It has no way of knowing whether they do or not until we tell it how.
-To do that,
-we add a clause specifying that
-we're only interested in combinations that have the same site name,
+To do that, we add a clause specifying that
+we're only interested in combinations that have the same country code,
 thus we need to use a filter:
 
 ~~~ {.sql}
-SELECT * FROM Site JOIN Visited ON Site.name=Visited.site;
+SELECT Country.code, Country.name, CountryLanguage.countrycode, CountryLanguage.language 
+FROM Country 
+JOIN CountryLanguage ON Country.code=CountryLanguage.countrycode 
+LIMIT 30;
 ~~~
 
-|name |lat   |long   |ident|site |dated     |
-|-----|------|-------|-----|-----|----------|
-|DR-1 |-49.85|-128.57|619  |DR-1 |1927-02-08|
-|DR-1 |-49.85|-128.57|622  |DR-1 |1927-02-10|
-|DR-1 |-49.85|-128.57|844  |DR-1 |1932-03-22|
-|DR-3 |-47.15|-126.72|734  |DR-3 |1930-01-07|
-|DR-3 |-47.15|-126.72|735  |DR-3 |1930-01-12|
-|DR-3 |-47.15|-126.72|751  |DR-3 |1930-02-26|
-|DR-3 |-47.15|-126.72|752  |DR-3 |-null-    |
-|MSK-4|-48.87|-123.4 |837  |MSK-4|1932-01-14|
+Code  Name                            Coun  Language                      
+----  ------------------------------  ----  ------------------------------
+ABW   Aruba                           ABW   Dutch                         
+ABW   Aruba                           ABW   English                       
+ABW   Aruba                           ABW   Papiamento                    
+ABW   Aruba                           ABW   Spanish                       
+AFG   Afghanistan                     AFG   Balochi                       
+AFG   Afghanistan                     AFG   Dari                          
+AFG   Afghanistan                     AFG   Pashto                        
+AFG   Afghanistan                     AFG   Turkmenian                    
+AFG   Afghanistan                     AFG   Uzbek                         
+AGO   Angola                          AGO   Ambo                          
+AGO   Angola                          AGO   Chokwe                        
+AGO   Angola                          AGO   Kongo                         
+AGO   Angola                          AGO   Luchazi                       
+AGO   Angola                          AGO   Luimbe-nganguela              
+AGO   Angola                          AGO   Luvale                        
+AGO   Angola                          AGO   Mbundu                        
+AGO   Angola                          AGO   Nyaneka-nkhumbi               
+AGO   Angola                          AGO   Ovimbundu                     
+AIA   Anguilla                        AIA   English                       
+ALB   Albania                         ALB   Albaniana                     
+ALB   Albania                         ALB   Greek                         
+ALB   Albania                         ALB   Macedonian                    
+AND   Andorra                         AND   Catalan                       
+AND   Andorra                         AND   French                        
+AND   Andorra                         AND   Portuguese                    
+AND   Andorra                         AND   Spanish                       
+ANT   Netherlands Antilles            ANT   Dutch                         
+ANT   Netherlands Antilles            ANT   English                       
+ANT   Netherlands Antilles            ANT   Papiamento                    
+ARE   United Arab Emirates            ARE   Arabic    
 
 `ON` is very similar to `WHERE`,
 and for all the queries in this lesson you can use them interchangeably.
@@ -97,93 +170,75 @@ There are differences in how they affect [outer joins][OUTER],
 but that's beyond the scope of this lesson.
 Once we add this to our query,
 the database manager throws away records
-that combined information about two different sites,
+that combined information about two different countires,
 leaving us with just the ones we want.
 
 Notice that we used `Table.field` to specify field names
 in the output of the join.
 We do this because tables can have fields with the same name,
 and we need to be specific which ones we're talking about.
-For example,
-if we joined the `Person` and `Visited` tables,
-the result would inherit a field called `ident`
-from each of the original tables.
 
-We can now use the same dotted notation
-to select the three columns we actually want
-out of our join:
+In this example, no two table have fields with the same name, 
+so we can get the same result with `field` name alone.
 
 ~~~ {.sql}
-SELECT Site.lat, Site.long, Visited.dated
-FROM   Site JOIN Visited
-ON     Site.name=Visited.site;
+SELECT code, name, countrycode,language 
+FROM Country 
+JOIN CountryLanguage ON code=countrycode 
+LIMIT 30;
 ~~~
 
-|lat   |long   |dated     |
-|------|-------|----------|
-|-49.85|-128.57|1927-02-08|
-|-49.85|-128.57|1927-02-10|
-|-49.85|-128.57|1932-03-22|
-|-47.15|-126.72|-null-    |
-|-47.15|-126.72|1930-01-12|
-|-47.15|-126.72|1930-02-26|
-|-47.15|-126.72|1930-01-07|
-|-48.87|-123.4 |1932-01-14|
+However, if we joined the `Country` and `City` tables, both tables have a field called `name`, and database manager 
+can get confused, and will demand to use `Table.field` format to avoid ambiguity.
 
-If joining two tables is good,
-joining many tables must be better.
-In fact,
-we can join any number of tables
-simply by adding more `JOIN` clauses to our query,
-and more `ON` tests to filter out combinations of records
-that don't make sense:
+In fact, we can join any number of tables simply by adding more `JOIN` clauses to our query,
+and more `ON` tests to filter out combinations of records that don't make sense:
+
 
 ~~~ {.sql}
-SELECT Site.lat, Site.long, Visited.dated, Survey.quant, Survey.reading
-FROM   Site
-JOIN   Visited ON Site.name=Visited.site
-JOIN   Survey ON Visited.ident=Survey.taken
-WHERE  Visited.dated IS NOT NULL;
+SELECT country.name, city.name,language 
+FROM Country 
+JOIN City ON code=city.countrycode 
+JOIN CountryLanguage ON code=countrylanguage.countrycode 
+WHERE country.name="New Zealand";
 ~~~
 
-|lat   |long   |dated     |quant|reading|
-|------|-------|----------|-----|-------|
-|-49.85|-128.57|1927-02-08|rad  |9.82   |
-|-49.85|-128.57|1927-02-08|sal  |0.13   |
-|-49.85|-128.57|1927-02-10|rad  |7.8    |
-|-49.85|-128.57|1927-02-10|sal  |0.09   |
-|-47.15|-126.72|1930-01-07|rad  |8.41   |
-|-47.15|-126.72|1930-01-07|sal  |0.05   |
-|-47.15|-126.72|1930-01-07|temp |-21.5  |
-|-47.15|-126.72|1930-01-12|rad  |7.22   |
-|-47.15|-126.72|1930-01-12|sal  |0.06   |
-|-47.15|-126.72|1930-01-12|temp |-26.0  |
-|-47.15|-126.72|1930-02-26|rad  |4.35   |
-|-47.15|-126.72|1930-02-26|sal  |0.1    |
-|-47.15|-126.72|1930-02-26|temp |-18.5  |
-|-48.87|-123.4 |1932-01-14|rad  |1.46   |
-|-48.87|-123.4 |1932-01-14|sal  |0.21   |
-|-48.87|-123.4 |1932-01-14|sal  |22.5   |
-|-49.85|-128.57|1932-03-22|rad  |11.25  |
+Name                            Name                            Language                      
+------------------------------  ------------------------------  ------------------------------
+New Zealand                     Auckland                        English                       
+New Zealand                     Auckland                        Maori                         
+New Zealand                     Christchurch                    English                       
+New Zealand                     Christchurch                    Maori                         
+New Zealand                     Manukau                         English                       
+New Zealand                     Manukau                         Maori                         
+New Zealand                     North Shore                     English                       
+New Zealand                     North Shore                     Maori                         
+New Zealand                     Waitakere                       English                       
+New Zealand                     Waitakere                       Maori                         
+New Zealand                     Wellington                      English                       
+New Zealand                     Wellington                      Maori                         
+New Zealand                     Dunedin                         English                       
+New Zealand                     Dunedin                         Maori                         
+New Zealand                     Hamilton                        English                       
+New Zealand                     Hamilton                        Maori                         
+New Zealand                     Lower Hutt                      English                       
+New Zealand                     Lower Hutt                      Maori  
 
-We can tell which records from `Site`, `Visited`, and `Survey`
-correspond with each other
-because those tables contain
-[primary keys](reference.html#primary-key)
-and [foreign keys](reference.html#foreign-key).
-A primary key is a value,
-or combination of values,
-that uniquely identifies each record in a table.
+
+We can tell which records from `Country`, `City`, and `CountryLanguage`
+correspond with each otherbecause those tables contain [primary keys](reference.html#primary-key)
+and [foreign keys](reference.html#foreign-key). A primary key is a value,
+or combination of values, that uniquely identifies each record in a table.
 A foreign key is a value (or combination of values) from one table
 that identifies a unique record in another table.
 Another way of saying this is that
 a foreign key is the primary key of one table
 that appears in some other table.
 In our database,
-`Person.ident` is the primary key in the `Person` table,
-while `Survey.person` is a foreign key
-relating the `Survey` table's entries
-to entries in `Person`.
+`Country.code` is the primary key in the `Country` table,
+while `City.countrycode` is a foreign key
+relating the `City` table's entries
+to entries in `Country`. (Note: We didn't use foreign keys when creating this db as it is disabled by default.)(https://www.sqlite.org/foreignkeys.html)
 
 Most database designers believe that
 every table should have a well-defined primary key.
@@ -202,40 +257,47 @@ SQLite [automatically numbers records][rowid] as they're added to tables,
 and we can use those record numbers in queries:
 
 ~~~ {.sql}
-SELECT rowid, * FROM Person;
+SELECT rowid, * FROM CountryLanguage LIMIT 10;
 ~~~
 
-|rowid|ident   |personal |family  |
-|-----|--------|---------|--------|
-|1    |dyer    |William  |Dyer    |
-|2    |pb      |Frank    |Pabodie |
-|3    |lake    |Anderson |Lake    |
-|4    |roe     |Valentina|Roerich |
-|5    |danforth|Frank    |Danforth|
+rowid  CountryCod  Language                        IsOfficial  Percentage
+-----  ----------  ------------------------------  ----------  ----------
+1      ABW         Dutch                           T           5.3       
+2      ABW         English                         F           9.5       
+3      ABW         Papiamento                      F           76.7      
+4      ABW         Spanish                         F           7.4       
+5      AFG         Balochi                         F           0.9       
+6      AFG         Dari                            T           32.1      
+7      AFG         Pashto                          T           52.4      
+8      AFG         Turkmenian                      F           1.9       
+9      AFG         Uzbek                           F           8.8       
+10     AGO         Ambo                            F           2.4  
 
-> ## Listing Radiation Readings {.challenge}
+> ## Listing primary languages {.challenge}
 >
-> Write a query that lists all radiation readings from the DR-1 site.
+> Write a query that lists country name and the primary language (spoken by over 50% of its population. Use `percentage` field)
 
-> ## Where's Frank? {.challenge}
+> ## Listing countries where English is official, but not popular {.challenge}
 >
-> Write a query that lists all sites visited by people named "Frank".
+> Write a query that lists the name of countries where English is its official language but it is spoken less than 50% of its population. (use `isofficial` field, whose value is either "T" or "F")
 
 > ## Reading Queries {.challenge}
 >
 > Describe in your own words what the following query produces:
 >
 > ~~~ {.sql}
-> SELECT Site.name FROM Site JOIN Visited
-> ON Site.lat<-49.0 AND Site.name=Visited.site AND Visited.dated>='1932-01-01';
+> SELECT name, language, population, percentage*population/100 
+> FROM Country 
+> JOIN Countrylanguage ON code=countrycode 
+> WHERE language LIKE "%Chinese%";
 > ~~~
 
-> ## Who has been where? {.challenge}
+> ## Population of Chinese speakers {.challenge}
 >
-> Write a query that shows each site with exact location (lat, long) ordered by visited date,
-> followed by personal name and family name of the person who visited the site
-> and the type of measurement taken and its reading. Please avoid all null values.
-> Tip: you should get 15 records with 8 fields.
+> Modify the query above and work out the world population of Chinese speakers.
+> Can you also find the population of English speakers?
+
 
 [OUTER]: http://en.wikipedia.org/wiki/Join_%28SQL%29#Outer_join
 [rowid]: https://www.sqlite.org/lang_createtable.html#rowid
+

@@ -9,11 +9,12 @@ CREATE TABLE `CountryLanguage` (
   `IsOfficial` char(1) NOT NULL DEFAULT 'F',
   `Percentage` float(4,1) NOT NULL DEFAULT '0.0',
   PRIMARY KEY (`CountryCode`,`Language`)
+  FOREIGN KEY(`CountryCode`) references Country(`Code`)
 );
 -- Dumping data for table `CountryLanguage`
 --
 -- ORDER BY:  `CountryCode`,`Language`
-
+begin transaction;
 INSERT INTO `CountryLanguage` VALUES ('ABW','Dutch','T',5.3);
 INSERT INTO `CountryLanguage` VALUES ('ABW','English','F',9.5);
 INSERT INTO `CountryLanguage` VALUES ('ABW','Papiamento','F',76.7);
@@ -998,4 +999,4 @@ INSERT INTO `CountryLanguage` VALUES ('ZWE','English','T',2.2);
 INSERT INTO `CountryLanguage` VALUES ('ZWE','Ndebele','F',16.2);
 INSERT INTO `CountryLanguage` VALUES ('ZWE','Nyanja','F',2.2);
 INSERT INTO `CountryLanguage` VALUES ('ZWE','Shona','F',72.1);
-
+end transaction;
