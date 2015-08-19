@@ -74,16 +74,39 @@ img {
 </blockquote>
 <p>Data is often redundant, so queries often return redundant information. For example, if we select the languages spoken in countries from the CountryLanguage table, we get this:</p>
 <pre class="sql"><code>SELECT continent FROM Country;</code></pre>
-<div id="continent" class="section level2">
-<h2>Continent</h2>
-<p>North America Asia<br />Africa<br />North America Europe<br />Europe<br />North America Asia<br />South America Asia<br />Oceania<br />Antarctica<br />Antarctica<br />North America Oceania<br />Europe<br />Asia<br />Africa<br />Europe<br />Africa<br />Africa<br />Asia<br />Europe<br />Asia<br />North America ….</p>
+<p>|Continent | |————-| |North America| |Asia | |Africa | |North America| |Europe | |Europe | |North America| |Asia | |South America| |Asia | |Oceania | |Antarctica | |Antarctica | |North America| |Oceania | |Europe | |Asia | |Africa | |Europe | |Africa | |Africa | |Asia | |Europe | |Asia | |North America| ….</p>
 <p>We can eliminate the redundant output by adding the <code>DISTINCT</code> keyword to our query:</p>
 <pre class="sql"><code>SELECT DISTINCT continent FROM Country;</code></pre>
-</div>
-<div id="continent-1" class="section level2">
-<h2>Continent</h2>
-<p>North America Asia<br />Africa<br />Europe<br />South America Oceania<br />Antarctica</p>
-<p><sub>~</sub></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Continent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">North America</td>
+</tr>
+<tr class="even">
+<td align="left">Asia</td>
+</tr>
+<tr class="odd">
+<td align="left">Africa</td>
+</tr>
+<tr class="even">
+<td align="left">Europe</td>
+</tr>
+<tr class="odd">
+<td align="left">South America</td>
+</tr>
+<tr class="even">
+<td align="left">Oceania</td>
+</tr>
+<tr class="odd">
+<td align="left">Antarctica</td>
+</tr>
+</tbody>
+</table>
 <p>If we want to determine which Region belongs to which Continent, we can use the <code>DISTINCT</code> keyword on multiple columns. If we select more than one column, the distinct <em>pairs</em> of values are returned:</p>
 <pre class="sql"><code>SELECT DISTINCT continent,region FROM Country;</code></pre>
 <table>
@@ -199,6 +222,7 @@ img {
 <p>Notice in both cases that duplicates are removed even if the rows they come from didn’t appear to be adjacent in the database table.</p>
 <blockquote>
 <p>If “Region” data look truncated, such as</p>
+</blockquote>
 <table>
 <thead>
 <tr class="header">
@@ -241,9 +265,10 @@ img {
 </tr>
 </tbody>
 </table>
+<blockquote>
 <p>specify the column width such as,</p>
-<pre><code>sqlite&gt; .width 15 30
-sqlite&gt; SELECT DISTINCT continent,region FROM Country;</code></pre>
+<pre class="sql"><code>.width 15 30
+SELECT DISTINCT continent,region FROM Country;</code></pre>
 </blockquote>
 <p>Our next task is to study population of each countryby looking at the <code>Country</code> table. As we mentioned earlier, database records are not stored in any particular order. This means that query results aren’t necessarily sorted, and even if they are, we often want to sort them in a different way, e.g., by country code instead of by name. We can do this in SQL by adding an <code>ORDER BY</code> clause to our query:</p>
 <pre class="sql"><code>SELECT name, continent, population FROM Country ORDER BY name;</code></pre>
@@ -569,7 +594,6 @@ sqlite&gt; SELECT DISTINCT continent,region FROM Country;</code></pre>
 <h2>Displaying continent and government form</h2>
 <p>Write a query that displays continent and government form from <code>Country</code> table ordered by continent then by government form. Remove duplicates from the ouput.</p>
 </blockquote>
-</div>
 
 
 </div>

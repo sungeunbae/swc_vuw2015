@@ -92,23 +92,24 @@ for example by using the string concatenation operator `||`:
 SELECT name || ',' || continent, population FROM Country WHERE name LIKE "N%";
 ~~~
 
-name || ',' || conti  Population          
---------------------  --------------------
-Netherlands Antilles  217000              
-Northern Mariana Isl  78000               
-Namibia,Africa        1726000             
-New Caledonia,Oceani  214000              
-Niger,Africa          10730000            
-Norfolk Island,Ocean  2000                
-Nigeria,Africa        111506000           
-Nicaragua,North Amer  5074000             
-Niue,Oceania          2000                
-Netherlands,Europe    15864000            
-Norway,Europe         4478500             
-Nepal,Asia            23930000            
-Nauru,Oceania         12000               
-New Zealand,Oceania   3862000             
-North Korea,Asia      24039000    
+name || ',' || continent                  Population
+----------------------------------------  ----------
+Netherlands Antilles,North America        217000    
+Northern Mariana Islands,Oceania          78000     
+Namibia,Africa                            1726000   
+New Caledonia,Oceania                     214000    
+Niger,Africa                              10730000  
+Norfolk Island,Oceania                    2000      
+Nigeria,Africa                            111506000 
+Nicaragua,North America                   5074000   
+Niue,Oceania                              2000      
+Netherlands,Europe                        15864000  
+Norway,Europe                             4478500   
+Nepal,Asia                                23930000  
+Nauru,Oceania                             12000     
+New Zealand,Oceania                       3862000   
+North Korea,Asia                          24039000  
+
 
 
 > ## Converting to New Zealand dollar {.challenge}
@@ -124,46 +125,48 @@ North Korea,Asia      24039000
 > SELECT * FROM City WHERE CountryCode="NZL" UNION SELECT * FROM City WHERE CountryCode="AUS";
 > ~~~
 >
->ID                    Name                  CountryCod  District                        Population
->--------------------  --------------------  ----------  ------------------------------  ----------
->130                   Sydney                AUS         New South Wales                 3276207
->131                   Melbourne             AUS         Victoria                        2865329
->132                   Brisbane              AUS         Queensland                      1291117
->133                   Perth                 AUS         West Australia                  1096829
->134                   Adelaide              AUS         South Australia                 978100
->135                   Canberra              AUS         Capital Region                  322723
->136                   Gold Coast            AUS         Queensland                      311932
->137                   Newcastle             AUS         New South Wales                 270324
->138                   Central Coast         AUS         New South Wales                 227657
->139                   Wollongong            AUS         New South Wales                 219761
->140                   Hobart                AUS         Tasmania                        126118
->141                   Geelong               AUS         Victoria                        125382
->142                   Townsville            AUS         Queensland                      109914
->143                   Cairns                AUS         Queensland                      92273
->3494                  Auckland              NZL         Auckland                        381800
->3495                  Christchurch          NZL         Canterbury                      324200
->3496                  Manukau               NZL         Auckland                        281800
->3497                  North Shore           NZL         Auckland                        187700
->3498                  Waitakere             NZL         Auckland                        170600
->3499                  Wellington            NZL         Wellington                      166700
->3500                  Dunedin               NZL         Dunedin                         119600
->3501                  Hamilton              NZL         Hamilton                        117100
->3502                  Lower Hutt            NZL         Wellington                      98100
->
+
+ID                    Name                  CountryCod  District                        Population
+--------------------  --------------------  ----------  ------------------------------  ----------
+130                   Sydney                AUS         New South Wales                 3276207
+131                   Melbourne             AUS         Victoria                        2865329
+132                   Brisbane              AUS         Queensland                      1291117
+133                   Perth                 AUS         West Australia                  1096829
+134                   Adelaide              AUS         South Australia                 978100
+135                   Canberra              AUS         Capital Region                  322723
+136                   Gold Coast            AUS         Queensland                      311932
+137                   Newcastle             AUS         New South Wales                 270324
+138                   Central Coast         AUS         New South Wales                 227657
+139                   Wollongong            AUS         New South Wales                 219761
+140                   Hobart                AUS         Tasmania                        126118
+141                   Geelong               AUS         Victoria                        125382
+142                   Townsville            AUS         Queensland                      109914
+143                   Cairns                AUS         Queensland                      92273
+3494                  Auckland              NZL         Auckland                        381800
+3495                  Christchurch          NZL         Canterbury                      324200
+3496                  Manukau               NZL         Auckland                        281800
+3497                  North Shore           NZL         Auckland                        187700
+3498                  Waitakere             NZL         Auckland                        170600
+3499                  Wellington            NZL         Wellington                      166700
+3500                  Dunedin               NZL         Dunedin                         119600
+3501                  Hamilton              NZL         Hamilton                        117100
+3502                  Lower Hutt            NZL         Wellington                      98100
+
 > Use `UNION` to create a consolidated list of name and region of countries in Melanesia and Micronesia.
 > The output should be something like:
 >
->name                                 region              
->-----------------------------------  --------------------
->Fiji Islands                         Melanesia           
->Guam                                 Micronesia          
->Kiribati                             Micronesia          
->Marshall Islands                     Micronesia          
->Micronesia, Federated States of      Micronesia          
->Nauru                                Micronesia          
->New Caledonia                        Melanesia           
->Northern Mariana Islands             Micronesia          
->Palau                                Micronesia          
->Papua New Guinea                     Melanesia           
->Solomon Islands                      Melanesia           
->Vanuatu                              Melanesia    
+
+name                                 region              
+-----------------------------------  --------------------
+Fiji Islands                         Melanesia           
+Guam                                 Micronesia          
+Kiribati                             Micronesia          
+Marshall Islands                     Micronesia          
+Micronesia, Federated States of      Micronesia          
+Nauru                                Micronesia          
+New Caledonia                        Melanesia           
+Northern Mariana Islands             Micronesia          
+Palau                                Micronesia          
+Papua New Guinea                     Melanesia           
+Solomon Islands                      Melanesia           
+Vanuatu                              Melanesia    

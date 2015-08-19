@@ -133,30 +133,30 @@ sqlite>
 
 
 Null values can cause headaches wherever they appear.
-For example, from the next query result, we wish to find records that are not represented by "Elisabeth II" as the head of state.
+For example, from the next query result, we wish to find records that are not represented by "Elizabeth II" as the head of state.
 
 ~~~ {.sql}
-SELECT name, headofstate,surfacearea FROM Country WHERE region="Antarctica";
+SELECT name, headofstate FROM Country WHERE region="Antarctica";
 ~~~
 
-Name                            HeadOfStat  SurfaceArea    
-------------------------------  ----------  ---------------
-Antarctica                                  13120000.0     
-French Southern territories     Jacques Ch  7780.0         
-Bouvet Island                   Harald V    59.0           
-Heard Island and McDonald Isla  Elisabeth   359.0          
-South Georgia and the South Sa  Elisabeth   3903.0 
+Name                                                HeadOfState         
+--------------------------------------------------  --------------------
+Antarctica                                                              
+French Southern territories                         Jacques Chirac      
+Bouvet Island                                       Harald V            
+Heard Island and McDonald Islands                   Elizabeth II        
+South Georgia and the South Sandwich Islands        Elizabeth II     
 
 It's natural to write the query like this:
 
 ~~~ {.sql}
-SELECT name, headofstate,surfacearea FROM Country WHERE region="Antarctica" AND headofstate!="Elisabeth II";
+SELECT name, headofstate FROM Country WHERE region="Antarctica" AND headofstate!="Elizabeth II";
 ~~~
 
-Name                            HeadOfStat  SurfaceArea    
-------------------------------  ----------  ---------------
-French Southern territories     Jacques Ch  7780.0         
-Bouvet Island                   Harald V    59.0    
+Name                                                HeadOfState         
+--------------------------------------------------  --------------------
+French Southern territories                         Jacques Chirac      
+Bouvet Island                                       Harald V 
 
 but this query filters omits the record of Antactica because its head of state is `null` and 
 the `!=` comparison produces `null`,
@@ -165,14 +165,14 @@ If we want to keep these records
 we need to add an explicit check:
 
 ~~~ {.sql}
-SELECT name, headofstate,surfacearea FROM Country WHERE region="Antarctica" AND (headofstate!="Elisabeth II" OR headofstate IS NULL);
+SELECT name, headofstate FROM Country WHERE region="Antarctica" AND (headofstate!="Elizabeth II" OR headofstate IS NULL);
 ~~~
 
-Name                            HeadOfStat  SurfaceArea    
-------------------------------  ----------  ---------------
-Antarctica                                  13120000.0     
-French Southern territories     Jacques Ch  7780.0         
-Bouvet Island                   Harald V    59.0 
+Name                                                HeadOfState         
+--------------------------------------------------  --------------------
+Antarctica                                                              
+French Southern territories                         Jacques Chirac      
+Bouvet Island                                       Harald V    
 
 
 In contrast to arithmetic or Boolean operators, aggregation functions that combine multiple values, such as `min`, `max` or `avg`, *ignore* `null` values. In the majority of cases, this is a desirable output: for example, unknown values are thus not affecting our data when we are averaging it. Aggregation functions will be addressed in more detail in [the next section](06-agg.html).
@@ -188,7 +188,7 @@ In contrast to arithmetic or Boolean operators, aggregation functions that combi
 > What do you expect the query:
 >
 > ~~~ {.sql}
-> SELECT name, headofstate,surfacearea FROM Country WHERE region="Antarctica" AND headofstate IN ("Elisabeth II", NULL);
+> SELECT name, headofstate FROM Country WHERE region="Antarctica" AND headofstate IN ("Elizabeth II", NULL);
 > ~~~
 >
 > to produce?

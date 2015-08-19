@@ -47,66 +47,70 @@ The tables below show the database we will use in our examples:
 
 > **City**: Major cities in world
 >
->ID          Name        CountryCode  District    Population
->----------  ----------  -----------  ----------  ----------
->1           Kabul       AFG          Kabol       1780000   
->2           Qandahar    AFG          Qandahar    237500    
->3           Herat       AFG          Herat       186800    
->4           Mazar-e-Sh  AFG          Balkh       127800    
->5           Amsterdam   NLD          Noord-Holl  731200    
->6           Rotterdam   NLD          Zuid-Holla  593321    
->7           Haag        NLD          Zuid-Holla  440900    
->8           Utrecht     NLD          Utrecht     234323    
->9           Eindhoven   NLD          Noord-Brab  201843    
->10          Tilburg     NLD          Noord-Brab  193238  
->...
 
-> **Country**: Countires in the world and their brief information.
+ID          Name        CountryCode  District    Population
+----------  ----------  -----------  ----------  ----------
+1           Kabul       AFG          Kabol       1780000   
+2           Qandahar    AFG          Qandahar    237500    
+3           Herat       AFG          Herat       186800    
+4           Mazar-e-Sh  AFG          Balkh       127800    
+5           Amsterdam   NLD          Noord-Holl  731200    
+6           Rotterdam   NLD          Zuid-Holla  593321    
+7           Haag        NLD          Zuid-Holla  440900    
+8           Utrecht     NLD          Utrecht     234323    
+9           Eindhoven   NLD          Noord-Brab  201843    
+10          Tilburg     NLD          Noord-Brab  193238  
+...
+
+> **Country**: Countires in the world and their brief information
 >
->Code        Name        Continent      Region      SurfaceArea  IndepYear   Population  LifeExpectancy  GNP         GNPOld      LocalName   GovernmentForm                                HeadOfState  Capital     Code2     
->----------  ----------  -------------  ----------  -----------  ----------  ----------  --------------  ----------  ----------  ----------  --------------------------------------------  -----------  ----------  ----------
->ABW         Aruba       North America  Caribbean   193.0                    103000      78.4            828.0       793.0       Aruba       Nonmetropolitan Territory of The Netherlands  Beatrix      129         AW        
->AFG         Afghanista  Asia           Southern a  652090.0     1919        22720000    45.9            5976.0                  Afganistan  Islamic Emirate                               Mohammad Om  1           AF        
->AGO         Angola      Africa         Central Af  1246700.0    1975        12878000    38.3            6648.0      7984.0      Angola      Republic                                      Jos� Eduard  56          AO        
->AIA         Anguilla    North America  Caribbean   96.0                     8000        76.1            63.2                    Anguilla    Dependent Territory of the UK                 Elisabeth I  62          AI        
->ALB         Albania     Europe         Southern E  28748.0      1912        3401200     71.6            3205.0      2500.0      Shqip�ria   Republic                                      Rexhep Mejd  34          AL        
->AND         Andorra     Europe         Southern E  468.0        1278        78000       83.5            1630.0                  Andorra     Parliamentary Coprincipality                  Marc Forn�   55          AD        
->ANT         Netherland  North America  Caribbean   800.0                    217000      74.7            1941.0                  Nederlands  Nonmetropolitan Territory of The Netherlands  Beatrix      33          AN        
->ARE         United Ara  Asia           Middle Eas  83600.0      1971        2441000     74.1            37966.0     36846.0     Al-Imarat   Emirate Federation                            Zayid bin S  65          AE        
->ARG         Argentina   South America  South Amer  2780400.0    1816        37032000    75.1            340238.0    323310.0    Argentina   Federal Republic                              Fernando de  69          AR        
->ARM         Armenia     Asia           Middle Eas  29800.0      1991        3520000     66.4            1813.0      1627.0      Hajastan    Republic                                      Robert Kot�  126         AM 
->...
+
+Code  Name                  Continent      Region                     Population  LifeExpect  GNP         GovernmentForm                  HeadOfState         
+----  --------------------  -------------  -------------------------  ----------  ----------  ----------  ------------------------------  --------------------
+ABW   Aruba                 North America  Caribbean                  103000      78.4        828.0       Nonmetropolitan Territory of T  Beatrix             
+AFG   Afghanistan           Asia           Southern and Central Asia  22720000    45.9        5976.0      Islamic Emirate                 Mohammad Omar       
+AGO   Angola                Africa         Central Africa             12878000    38.3        6648.0      Republic                        José Eduardo dos Sa
+AIA   Anguilla              North America  Caribbean                  8000        76.1        63.2        Dependent Territory of the UK   Elizabeth II        
+ALB   Albania               Europe         Southern Europe            3401200     71.6        3205.0      Republic                        Rexhep Mejdani      
+AND   Andorra               Europe         Southern Europe            78000       83.5        1630.0      Parliamentary Coprincipality    Marc Forné Molné  
+ANT   Netherlands Antilles  North America  Caribbean                  217000      74.7        1941.0      Nonmetropolitan Territory of T  Beatrix             
+ARE   United Arab Emirates  Asia           Middle East                2441000     74.1        37966.0     Emirate Federation              Zayid bin Sultan al-
+ARG   Argentina             South America  South America              37032000    75.1        340238.0    Federal Republic                Fernando de la Rúa 
+ARM   Armenia               Asia           Middle East                3520000     66.4        1813.0      Republic                        Robert KotÂšarjan 
+ASM   American Samoa        Oceania        Polynesia                  68000       75.1        334.0       US Territory                    George W. Bush      
+ATA   Antarctica            Antarctica     Antarctica                 0                       0.0         Co-administrated                                    
+ATF   French Southern terr  Antarctica     Antarctica                 0                       0.0         Nonmetropolitan Territory of F  Jacques Chirac 
+...
 
 
 > **CountryLanguage**: Language each country speaks
 >
->CountryCode  Language    IsOfficial  Percentage
->-----------  ----------  ----------  ----------
->ABW          Dutch       T           5.3       
->ABW          English     F           9.5       
->ABW          Papiamento  F           76.7      
->ABW          Spanish     F           7.4       
->AFG          Balochi     F           0.9       
->AFG          Dari        T           32.1      
->AFG          Pashto      T           52.4      
->AFG          Turkmenian  F           1.9       
->AFG          Uzbek       F           8.8       
->AGO          Ambo        F           2.4
->...
+
+CountryCode  Language    IsOfficial  Percentage
+-----------  ----------  ----------  ----------
+ABW          Dutch       T           5.3       
+ABW          English     F           9.5       
+ABW          Papiamento  F           76.7      
+ABW          Spanish     F           7.4       
+AFG          Balochi     F           0.9       
+AFG          Dari        T           32.1      
+AFG          Pashto      T           52.4      
+AFG          Turkmenian  F           1.9       
+AFG          Uzbek       F           8.8       
+AGO          Ambo        F           2.4
+...
 
 
-Notice that three entries have no data in `IndepYear` column
-and four don't contain any data in `GNPOld` column  in the `Country` table.
+Notice that two entries have no data in `LifeExpectancy` column.
 
 We'll return to these missing values [later](05-null.html).
-For now,
-let's write an SQL query that displays Cities' names and country codes.
+For now, let's write an SQL query that displays Cities' names and country codes.
 We do this using the SQL command `SELECT`,
 giving it the names of the columns we want and the table we want them from.
 Our query and its output look like this:
 
 ~~~ {.sql}
- SELECT Name, CountryCode from City;
+SELECT Name, CountryCode from City;
 ~~~
 
 Name        CountryCode
@@ -127,7 +131,7 @@ The semicolon at the end of the query tells the database manager that the query 
 As the example below shows, SQL is [case insensitive](reference.html#case-insensitive).
 
 ~~~ {.sql}
- SeLeCt NaMe, CoUnTrYCoDe FrOm CiTy;
+SeLeCt NaMe, CoUnTrYCoDe FrOm CiTy;
 ~~~
 Name        CountryCode
 ----------  -----------
@@ -154,7 +158,7 @@ Going back to our query, you must have seen lots of output from the query.
 To make it only print the first 10 lines, you can add `LIMIT 10` at the end of query.
 
 ~~~ {.sql}
-  SELECT Name, CountryCode from City LIMIT 10;
+SELECT Name, CountryCode from City LIMIT 10;
 ~~~
 Name        CountryCode
 ----------  -----------
@@ -256,9 +260,10 @@ Armenia     Middle Eas  Republic
 
 In `column` mode, we have a fixed width for a column and some text may be seen truncated. Don't worry, it is just a display issue - data is still there.
 We can use `.width` to fix. We will give width of 25, 30 and 50 to each column.
+
 ~~~{.sql}
-sqlite> .width 25 30 50
-sqlite> select name, region, governmentform from country limit 10;
+.width 25 30 50
+select name, region, governmentform from country limit 10;
 ~~~
 
 Name                       Region                          GovernmentForm                                    

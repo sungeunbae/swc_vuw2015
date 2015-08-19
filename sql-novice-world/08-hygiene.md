@@ -35,10 +35,10 @@ The third rule is that there should be no redundant information.
 For example,
 we could get rid of the `CountryLanguage` table and rewrite the `Country` table like this (showing only "New Zealand" here)
 
-Code                            Name                  Continent             Region                          SurfaceAre  IndepYear   Population  LifeExpectancy  GNP         GNPOld      LocalName             GovernmentForm           HeadOfState   Capital     Code2       CountryCode  Language    IsOfficial  Percentage
-------------------------------  --------------------  --------------------  ------------------------------  ----------  ----------  ----------  --------------  ----------  ----------  --------------------  -----------------------  ------------  ----------  ----------  -----------  ----------  ----------  ----------
-NZL                             New Zealand           Oceania               Australia and New Zealand       270534.0    1907        3862000     77.8            54669.0     64960.0     New Zealand/Aotearoa  Constitutional Monarchy  Elisabeth II  3499        NZ          NZL          English     T           87.0      
-NZL                             New Zealand           Oceania               Australia and New Zealand       270534.0    1907        3862000     77.8            54669.0     64960.0     New Zealand/Aotearoa  Constitutional Monarchy  Elisabeth II  3499        NZ          NZL          Maori       F           4.3   
+name  Continent   Region                      Population  LifeExpect  GNP      GovernmentForm           HeadOfState   Language    IsOfficial  Percentage
+----  ----------  --------------------------  ----------  ----------  -------  -----------------------  ------------  ----------  ----------  ----------
+NZL   Oceania     Australia and New Zealand   3862000     77.8        54669.0  Constitutional Monarchy  Elizabeth II  English     T           87.0      
+NZL   Oceania     Australia and New Zealand   3862000     77.8        54669.0  Constitutional Monarchy  Elizabeth II  Maori       F           4.3  
 
 In fact,
 we could use a single table that recorded all the information about each reading in each row,

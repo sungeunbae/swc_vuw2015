@@ -11,8 +11,7 @@ minutes: 30
 
 So far we have only looked at how to get information out of a database,
 both because that is more frequent than adding information,
-and because most other operations only make sense
-once queries are understood.
+and because most other operations only make sense once queries are understood.
 If we want to create and modify data,
 we need to know two other sets of commands.
 
@@ -22,19 +21,19 @@ they are actually single commands.
 The first one creates a new table;
 its arguments are the names and types of the table's columns.
 For example,
-the following statements create the four tables in our world database:
+the following statements create the three tables in our world database:
 
 ~~~ {.sql}
-CREATE TABLE Person(ident TEXT, personal TEXT, family TEXT);
-CREATE TABLE Site(name TEXT, lat REAL, long REAL);
-CREATE TABLE Visited(ident INTEGER, site TEXT, dated TEXT);
-CREATE TABLE Survey(taken INTEGER, person TEXT, quant REAL, reading REAL);
+CREATE TABLE `Country` (`Code` TEXT, `Name` TEXT, `Continent` TEXT,`Region` TEXT,`Population` INTEGER,
+                        `LifeExpectancy` REAL,`GNP` REAL,`GovernmentForm` TEXT, `HeadOfState` TEXT);
+CREATE TABLE `City` (`ID` INTEGER,`Name` TEXT,`CountryCode` TEXT,`District` TEXT,`Population` INTEGER);
+CREATE TABLE `CountryLanguage` (`CountryCode` TEXT,`Language` TEXT, `IsOfficial` CHAR,`Percentage` REAL);
 ~~~
 
 We can get rid of one of our tables using:
 
 ~~~ {.sql}
-DROP TABLE Survey;
+DROP TABLE CountryLanguage;
 ~~~
 
 Be very careful when doing this:
@@ -51,29 +50,22 @@ REAL       a floating point number
 TEXT       a character string
 BLOB       a "binary large object", such as an image
 
-Most databases also support Booleans and date/time values;
-SQLite uses the integers 0 and 1 for the former,
-and represents the latter as discussed [earlier](#a:dates).
-An increasing number of databases also support geographic data types,
-such as latitude and longitude.
-Keeping track of what particular systems do or do not offer,
-and what names they give different data types,
-is an unending portability headache.
+Most databases also support Booleans and date/time values. An increasing number of databases also support geographic data types, such as latitude and longitude.
+Keeping track of what particular systems do or do not offer, and what names they give different data types, is an unending portability headache.
 
 When we create a table,
 we can specify several kinds of constraints on its columns.
 For example,
-a better definition for the `Survey` table would be:
+a better definition for the `CountryLanguage` table would be:
 
 ~~~ {.sql}
-CREATE TABLE Survey(
-    taken   integer not null, -- where reading taken
-    person  text,             -- may not know who took it
-    quant   real not null,    -- the quantity measured
-    reading real not null,    -- the actual reading
-    primary key(taken, quant),
-    foreign key(taken) references Visited(ident),
-    foreign key(person) references Person(ident)
+CREATE TABLE `CountryLanguage` (
+  `CountryCode` TEXT NOT NULL DEFAULT '',
+  `Language` TEXT NOT NULL DEFAULT '',
+  `IsOfficial` CHAR NOT NULL DEFAULT 'F',
+  `Percentage` REAL NOT NULL DEFAULT 0.0,
+  PRIMARY KEY (`CountryCode`,`Language`)
+  FOREIGN KEY(`CountryCode`) references Country(`Code`)
 );
 ~~~
 
@@ -86,19 +78,41 @@ Once tables have been created,
 we can add, change, and remove records using our other set of commands,
 `INSERT`, `UPDATE`, and `DELETE`.
 
-The simplest form of `INSERT` statement lists values in order:
+Let's modify New Zealand language data.
 
-~~~ {.sql}
-INSERT INTO Site values('DR-1', -49.85, -128.57);
-INSERT INTO Site values('DR-3', -47.15, -126.72);
-INSERT INTO Site values('MSK-4', -48.87, -123.40);
+~~~{.sql}
+SELECT * FROM CountryLanguage WHERE countrycode='NZL';
 ~~~
 
-We can also insert values into one table directly from another:
+CountryCode  Language   IsOfficial  Percentage
+-----------  ---------  ----------  ----------
+NZL          English    T           87.0      
+NZL          Maori      F           4.3   
+
+There are some issues. Maori and NZ Sign Language became New Zealand's official languages in 1987 and 2006, and this information need to be updated. 
+
+According to the 2013 New Zealand Census, English is spoken by 96.14%, Maori by 3.73% and NZ Sign Language by 0.51%.
+(https://en.wikipedia.org/wiki/Languages_of_New_Zealand)
+
+Language 	 Number 	  Percentage
+---------  ---------  ----------
+English    3,819,969 	96.14
+Maori 	   148,395 	  3.73 	
+Samoan 	   86,403 	  2.17
+Hindi 	   66,309 	  1.67
+NZ Sign    20,235     0.51
+
+Let's insert NZ Sign Language - The simplest form of `INSERT` statement lists values in order:
+
+~~~{.sql}
+INSERT INTO CountryLanguage values('NZL','NZ Sign Language','T', 0.51);
+~~~
+
+Similarly, we can insert Samon and Hindi.
 
 ~~~ {.sql}
-CREATE TABLE JustLatLong(lat text, long text);
-INSERT INTO JustLatLong SELECT lat, long FROM Site;
+INSERT INTO CountryLanguage values('NZL','Samoan','F', 2.17);
+INSERT INTO CountryLanguage values('NZL','Hindi','F', 1.67);
 ~~~
 
 Modifying existing records is done using the `UPDATE` statement.
@@ -106,15 +120,32 @@ To do this we tell the database which table we want to update,
 what we want to change the values to for any or all of the fields,
 and under what conditions we should update the values.
 
-For example, if we made a mistake when entering the lat and long values
-of the last `INSERT` statement above:
+For example, English speaking population has increased to 96.14% and Maori has decreased to 3.74%, but it has become an official language.
 
 ~~~ {.sql}
-UPDATE Site SET lat=-47.87, long=-122.40 WHERE name='MSK-4';
+UPDATE CountryLanguage SET percentage=96.14 WHERE countrycode='NZL' AND language='English';
+UPDATE CountryLanguage SET percentage=3.74, isofficial='T' WHERE countrycode='NZL' AND language='Maori';
 ~~~
+
+Now, let's see the modified records.
+
+~~~ {.sql}
+SELECT * FROM CountryLanguage WHERE countrycode='NZL';
+~~~
+
+CountryCode  Language   IsOfficial  Percentage
+-----------  ---------  ----------  ----------
+NZL          English    T           96.14     
+NZL          Hindi      F           1.67      
+NZL          Maori      T           3.74      
+NZL          NZ Sign L  T           0.51      
+NZL          Samoan     F           2.17 
+
+
 
 Be careful to not forget the `where` clause or the update statement will
 modify *all* of the records in the database.
+
 
 Deleting records can be a bit trickier,
 because we have to ensure that the database remains internally consistent.
@@ -122,31 +153,37 @@ If all we care about is a single table,
 we can use the `DELETE` command with a `WHERE` clause
 that matches the records we want to discard.
 For example,
-once we realize that Frank Danforth didn't take any measurements,
-we can remove him from the `Person` table like this:
+if we wish to delete a country, we can remove from the `Country` table like this:
 
 ~~~ {.sql}
-DELETE FROM Person WHERE ident = 'danforth';
+DELETE FROM Country WHERE code = 'NZL';
 ~~~
 
-But what if we removed Anderson Lake instead?
-Our `Survey` table would still contain seven records
-of measurements he'd taken,
-but that's never supposed to happen:
-`Survey.person` is a foreign key into the `Person` table,
-and all our queries assume there will be a row in the latter
-matching every value in the former.
+What is going to happen? Our `City` table would still contain a number of New Zealand cities and 
+`CountryLanguage` table also have a few records related to New Zealand. 
+This shoundn't happen because `Country.code` is a foreign key into the `City` table, and the `CountryLanguage` table,
+and all our queries assume there will be a row in the `City` and `CountryLanguage` matching every value in the `Country`.
 
 This problem is called [referential integrity](reference.html#referential-integrity):
 we need to ensure that all references between tables can always be resolved correctly.
 One way to do this is to delete all the records
-that use `'lake'` as a foreign key
+that use `'NZL'` as a foreign key
 before deleting the record that uses it as a primary key.
 If our database manager supports it,
 we can automate this
 using [cascading delete](reference.html#cascading-delete).
 However,
 this technique is outside the scope of this chapter.
+
+
+<!---
+We can also insert values into one table directly from another:
+
+~~~ {.sql}
+CREATE TABLE JustLatLong(lat text, long text);
+INSERT INTO JustLatLong SELECT lat, long FROM Site;
+~~~
+--->
 
 > ## Hybrid Storage Models {.callout}
 >
@@ -165,36 +202,45 @@ this technique is outside the scope of this chapter.
 > ## Replacing NULL {.challenge}
 >
 > Write an SQL statement to replace all uses of `null` in
-> `Survey.person` with the string `'unknown'`.
+> `Country.headofstate` with the string `'unknown'`.
 
-> ## Generating Insert Statements {.challenge}
->
-> One of our colleagues has sent us a [CSV](reference.html#comma-separated-values) file containing
-> temperature readings by Robert Olmstead, which is formatted like
-> this:
->
-> ~~~ {.output}
-> Taken,Temp
-> 619,-21.5
-> 622,-15.5
-> ~~~
->
-> Write a small Python program that reads this file in and prints out
-> the SQL `INSERT` statements needed to add these records to the
-> world database.  Note: you will need to add an entry for Olmstead
-> to the `Person` table.  If you are testing your program repeatedly,
-> you may want to investigate SQL's `INSERT or REPLACE` command.
+> ## Importing CSV {.challenge}
+
+> If you have [CSV](reference.html#comma-separated-values) files, you can import the data using SQLite's CSV import feature
+> First, you need to create the table. You can enter the SQL commands for creating tables. Alternativey, you can execute `create_tables.sql` 
+> (which already contains the SQL commands) by:
+
+~~~{.sql}
+.read create_tables.sql
+~~~
+> Secondly, you need to set the mode to load CSV
+
+~~~{.sql}
+.mode csv
+~~~
+
+> Finally, import each CSV file into table.
+
+~~~{.sql}
+.import country.csv Country
+.import city.csv City
+.import countrylanguage.csv CountryLanguage
+~~~
+
+> Note: Importing from CSV might have an issue in handling NULL values because an empty (ie. NULL) value in CSV is an empty string (ie. ""), 
+> which might not be exactly what you expect.
 
 > ## Backing Up with SQL {.challenge}
 >
 > SQLite has several administrative commands that aren't part of the
 > SQL standard.  One of them is `.dump`, which prints the SQL commands
-> needed to re-create the database.  Another is `.load`, which reads a
+> needed to re-create the database.  Another is `.read`, which reads a
 > file created by `.dump` and restores the database.  A colleague of
 > yours thinks that storing dump files (which are text) in version
 > control is a good way to track and manage changes to the database.
 > What are the pros and cons of this approach?  (Hint: records aren't
 > stored in any particular order.)
+
 
 [CREATE-TABLE]: https://www.sqlite.org/lang_createtable.html
 [DROP-TABLE]: https://www.sqlite.org/lang_droptable.html

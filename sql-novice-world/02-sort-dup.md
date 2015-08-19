@@ -19,33 +19,33 @@ we get this:
 SELECT continent FROM Country;
 ~~~
 
-Continent    
--------------
-North America
-Asia         
-Africa       
-North America
-Europe       
-Europe       
-North America
-Asia         
-South America
-Asia         
-Oceania      
-Antarctica   
-Antarctica   
-North America
-Oceania      
-Europe       
-Asia         
-Africa       
-Europe       
-Africa       
-Africa       
-Asia         
-Europe       
-Asia         
-North America
+|Continent    |
+|-------------|
+|North America|
+|Asia         |
+|Africa       |
+|North America|
+|Europe       |
+|Europe       |
+|North America|
+|Asia         |
+|South America|
+|Asia         |
+|Oceania      |
+|Antarctica   |
+|Antarctica   |
+|North America|
+|Oceania      |
+|Europe       |
+|Asia         |
+|Africa       |
+|Europe       |
+|Africa       |
+|Africa       |
+|Asia         |
+|Europe       |
+|Asia         |
+|North America|
 ....
 
 We can eliminate the redundant output by adding the `DISTINCT` keyword
@@ -55,17 +55,16 @@ to our query:
 SELECT DISTINCT continent FROM Country;
 ~~~
 
-Continent    
--------------
-North America
-Asia         
-Africa       
-Europe       
-South America
-Oceania      
-Antarctica   
+|Continent    |
+|-------------|
+|North America|
+|Asia         |
+|Africa       |
+|Europe       |
+|South America|
+|Oceania      |
+|Antarctica   |
 
-~~~
 
 If we want to determine which Region belongs to which Continent, 
 we can use the `DISTINCT` keyword on multiple columns.
@@ -109,22 +108,23 @@ even if the rows they come from didn't appear to be adjacent in the database tab
 
 > If "Region" data look truncated, such as
 >
->Continent        Region    
->---------------  ----------
->North America    Caribbean 
->Asia             Southern a
->Africa           Central Af
->Europe           Southern E
->Asia             Middle Eas
->South America    South Amer
->Oceania          Polynesia 
->...
+
+Continent        Region    
+---------------  ----------
+North America    Caribbean 
+Asia             Southern a
+Africa           Central Af
+Europe           Southern E
+Asia             Middle Eas
+South America    South Amer
+Oceania          Polynesia 
+...
+
+> specify the column width such as,
 >
->specify the column width such as,
->
-> ~~~
-> sqlite> .width 15 30
-> sqlite> SELECT DISTINCT continent,region FROM Country;
+> ~~~{.sql}
+> .width 15 30
+> SELECT DISTINCT continent,region FROM Country;
 > ~~~
 
 

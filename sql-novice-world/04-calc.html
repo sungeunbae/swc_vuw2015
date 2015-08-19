@@ -287,108 +287,321 @@ img {
 </tbody>
 </table>
 <p>We can also combine values from different fields, for example by using the string concatenation operator <code>||</code>:</p>
-<pre class="sql"><code>SELECT name || ',' || continent FROM Country WHERE name LIKE &quot;N%&quot;;</code></pre>
-<div id="name-continent" class="section level2">
-<h2>name || ‘,’ || Continent</h2>
-<p>Netherlands Antilles,North America<br />Northern Mariana Islands,Oceania<br />Namibia,Africa<br />New Caledonia,Oceania<br />Niger,Africa<br />Norfolk Island,Oceania<br />Nigeria,Africa<br />Nicaragua,North America<br />Niue,Oceania<br />Netherlands,Europe<br />Norway,Europe<br />Nepal,Asia<br />Nauru,Oceania<br />New Zealand,Oceania<br />North Korea,Asia</p>
+<pre class="sql"><code>SELECT name || ',' || continent, population FROM Country WHERE name LIKE &quot;N%&quot;;</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">name || ‘,’ || continent</th>
+<th align="left">Population</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Netherlands Antilles,North America</td>
+<td align="left">217000</td>
+</tr>
+<tr class="even">
+<td align="left">Northern Mariana Islands,Oceania</td>
+<td align="left">78000</td>
+</tr>
+<tr class="odd">
+<td align="left">Namibia,Africa</td>
+<td align="left">1726000</td>
+</tr>
+<tr class="even">
+<td align="left">New Caledonia,Oceania</td>
+<td align="left">214000</td>
+</tr>
+<tr class="odd">
+<td align="left">Niger,Africa</td>
+<td align="left">10730000</td>
+</tr>
+<tr class="even">
+<td align="left">Norfolk Island,Oceania</td>
+<td align="left">2000</td>
+</tr>
+<tr class="odd">
+<td align="left">Nigeria,Africa</td>
+<td align="left">111506000</td>
+</tr>
+<tr class="even">
+<td align="left">Nicaragua,North America</td>
+<td align="left">5074000</td>
+</tr>
+<tr class="odd">
+<td align="left">Niue,Oceania</td>
+<td align="left">2000</td>
+</tr>
+<tr class="even">
+<td align="left">Netherlands,Europe</td>
+<td align="left">15864000</td>
+</tr>
+<tr class="odd">
+<td align="left">Norway,Europe</td>
+<td align="left">4478500</td>
+</tr>
+<tr class="even">
+<td align="left">Nepal,Asia</td>
+<td align="left">23930000</td>
+</tr>
+<tr class="odd">
+<td align="left">Nauru,Oceania</td>
+<td align="left">12000</td>
+</tr>
+<tr class="even">
+<td align="left">New Zealand,Oceania</td>
+<td align="left">3862000</td>
+</tr>
+<tr class="odd">
+<td align="left">North Korea,Asia</td>
+<td align="left">24039000</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
-<h2>Fixing Salinity Readings</h2>
-<p>After further reading, we realize that Valentina Roerich was reporting salinity as percentages. Write a query that returns all of her salinity measurements from the <code>Survey</code> table with the values divided by 100.</p>
+<h2>Converting to New Zealand dollar</h2>
+<p>GNP per capita we computed was in US dollar. In November 2000, about the time this data was compiled, NZD/USD exchange rate dropped to historic low 0.39. Modify the query for GNP per capita to output the amount in NZD using this exchange rate.</p>
 </blockquote>
 <blockquote>
 <h2>Unions</h2>
 <p>The <code>UNION</code> operator combines the results of two queries:</p>
-<pre class="sql"><code>SELECT * FROM Person WHERE ident='dyer' UNION SELECT * FROM Person WHERE ident='roe';</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">ident</th>
-<th align="left">personal</th>
-<th align="left">family</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">dyer</td>
-<td align="left">William</td>
-<td align="left">Dyer</td>
-</tr>
-<tr class="even">
-<td align="left">roe</td>
-<td align="left">Valentina</td>
-<td align="left">Roerich</td>
-</tr>
-</tbody>
-</table>
-<p>Use <code>UNION</code> to create a consolidated list of salinity measurements in which Roerich’s, and only Roerich’s, have been corrected as described in the previous challenge. The output should be something like:</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">taken</th>
-<th align="left">reading</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">619</td>
-<td align="left">0.13</td>
-</tr>
-<tr class="even">
-<td align="left">622</td>
-<td align="left">0.09</td>
-</tr>
-<tr class="odd">
-<td align="left">734</td>
-<td align="left">0.05</td>
-</tr>
-<tr class="even">
-<td align="left">751</td>
-<td align="left">0.1</td>
-</tr>
-<tr class="odd">
-<td align="left">752</td>
-<td align="left">0.09</td>
-</tr>
-<tr class="even">
-<td align="left">752</td>
-<td align="left">0.416</td>
-</tr>
-<tr class="odd">
-<td align="left">837</td>
-<td align="left">0.21</td>
-</tr>
-<tr class="even">
-<td align="left">837</td>
-<td align="left">0.225</td>
-</tr>
-</tbody>
-</table>
+<pre class="sql"><code>SELECT * FROM City WHERE CountryCode=&quot;NZL&quot; UNION SELECT * FROM City WHERE CountryCode=&quot;AUS&quot;;</code></pre>
 </blockquote>
+<table>
+<thead>
+<tr class="header">
+<th align="left">ID</th>
+<th align="left">Name</th>
+<th align="left">CountryCod</th>
+<th align="left">District</th>
+<th align="left">Population</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">130</td>
+<td align="left">Sydney</td>
+<td align="left">AUS</td>
+<td align="left">New South Wales</td>
+<td align="left">3276207</td>
+</tr>
+<tr class="even">
+<td align="left">131</td>
+<td align="left">Melbourne</td>
+<td align="left">AUS</td>
+<td align="left">Victoria</td>
+<td align="left">2865329</td>
+</tr>
+<tr class="odd">
+<td align="left">132</td>
+<td align="left">Brisbane</td>
+<td align="left">AUS</td>
+<td align="left">Queensland</td>
+<td align="left">1291117</td>
+</tr>
+<tr class="even">
+<td align="left">133</td>
+<td align="left">Perth</td>
+<td align="left">AUS</td>
+<td align="left">West Australia</td>
+<td align="left">1096829</td>
+</tr>
+<tr class="odd">
+<td align="left">134</td>
+<td align="left">Adelaide</td>
+<td align="left">AUS</td>
+<td align="left">South Australia</td>
+<td align="left">978100</td>
+</tr>
+<tr class="even">
+<td align="left">135</td>
+<td align="left">Canberra</td>
+<td align="left">AUS</td>
+<td align="left">Capital Region</td>
+<td align="left">322723</td>
+</tr>
+<tr class="odd">
+<td align="left">136</td>
+<td align="left">Gold Coast</td>
+<td align="left">AUS</td>
+<td align="left">Queensland</td>
+<td align="left">311932</td>
+</tr>
+<tr class="even">
+<td align="left">137</td>
+<td align="left">Newcastle</td>
+<td align="left">AUS</td>
+<td align="left">New South Wales</td>
+<td align="left">270324</td>
+</tr>
+<tr class="odd">
+<td align="left">138</td>
+<td align="left">Central Coast</td>
+<td align="left">AUS</td>
+<td align="left">New South Wales</td>
+<td align="left">227657</td>
+</tr>
+<tr class="even">
+<td align="left">139</td>
+<td align="left">Wollongong</td>
+<td align="left">AUS</td>
+<td align="left">New South Wales</td>
+<td align="left">219761</td>
+</tr>
+<tr class="odd">
+<td align="left">140</td>
+<td align="left">Hobart</td>
+<td align="left">AUS</td>
+<td align="left">Tasmania</td>
+<td align="left">126118</td>
+</tr>
+<tr class="even">
+<td align="left">141</td>
+<td align="left">Geelong</td>
+<td align="left">AUS</td>
+<td align="left">Victoria</td>
+<td align="left">125382</td>
+</tr>
+<tr class="odd">
+<td align="left">142</td>
+<td align="left">Townsville</td>
+<td align="left">AUS</td>
+<td align="left">Queensland</td>
+<td align="left">109914</td>
+</tr>
+<tr class="even">
+<td align="left">143</td>
+<td align="left">Cairns</td>
+<td align="left">AUS</td>
+<td align="left">Queensland</td>
+<td align="left">92273</td>
+</tr>
+<tr class="odd">
+<td align="left">3494</td>
+<td align="left">Auckland</td>
+<td align="left">NZL</td>
+<td align="left">Auckland</td>
+<td align="left">381800</td>
+</tr>
+<tr class="even">
+<td align="left">3495</td>
+<td align="left">Christchurch</td>
+<td align="left">NZL</td>
+<td align="left">Canterbury</td>
+<td align="left">324200</td>
+</tr>
+<tr class="odd">
+<td align="left">3496</td>
+<td align="left">Manukau</td>
+<td align="left">NZL</td>
+<td align="left">Auckland</td>
+<td align="left">281800</td>
+</tr>
+<tr class="even">
+<td align="left">3497</td>
+<td align="left">North Shore</td>
+<td align="left">NZL</td>
+<td align="left">Auckland</td>
+<td align="left">187700</td>
+</tr>
+<tr class="odd">
+<td align="left">3498</td>
+<td align="left">Waitakere</td>
+<td align="left">NZL</td>
+<td align="left">Auckland</td>
+<td align="left">170600</td>
+</tr>
+<tr class="even">
+<td align="left">3499</td>
+<td align="left">Wellington</td>
+<td align="left">NZL</td>
+<td align="left">Wellington</td>
+<td align="left">166700</td>
+</tr>
+<tr class="odd">
+<td align="left">3500</td>
+<td align="left">Dunedin</td>
+<td align="left">NZL</td>
+<td align="left">Dunedin</td>
+<td align="left">119600</td>
+</tr>
+<tr class="even">
+<td align="left">3501</td>
+<td align="left">Hamilton</td>
+<td align="left">NZL</td>
+<td align="left">Hamilton</td>
+<td align="left">117100</td>
+</tr>
+<tr class="odd">
+<td align="left">3502</td>
+<td align="left">Lower Hutt</td>
+<td align="left">NZL</td>
+<td align="left">Wellington</td>
+<td align="left">98100</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
-<h2>Selecting Major Site Identifiers</h2>
-<p>The site identifiers in the <code>Visited</code> table have two parts separated by a ‘-’:</p>
-<pre class="sql"><code>SELECT DISTINCT site FROM Visited;</code></pre>
+<p>Use <code>UNION</code> to create a consolidated list of name and region of countries in Melanesia and Micronesia. The output should be something like:</p>
+</blockquote>
 <table>
 <thead>
 <tr class="header">
-<th align="left">site</th>
+<th align="left">name</th>
+<th align="left">region</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">DR-1</td>
+<td align="left">Fiji Islands</td>
+<td align="left">Melanesia</td>
 </tr>
 <tr class="even">
-<td align="left">DR-3</td>
+<td align="left">Guam</td>
+<td align="left">Micronesia</td>
 </tr>
 <tr class="odd">
-<td align="left">MSK-4</td>
+<td align="left">Kiribati</td>
+<td align="left">Micronesia</td>
+</tr>
+<tr class="even">
+<td align="left">Marshall Islands</td>
+<td align="left">Micronesia</td>
+</tr>
+<tr class="odd">
+<td align="left">Micronesia, Federated States of</td>
+<td align="left">Micronesia</td>
+</tr>
+<tr class="even">
+<td align="left">Nauru</td>
+<td align="left">Micronesia</td>
+</tr>
+<tr class="odd">
+<td align="left">New Caledonia</td>
+<td align="left">Melanesia</td>
+</tr>
+<tr class="even">
+<td align="left">Northern Mariana Islands</td>
+<td align="left">Micronesia</td>
+</tr>
+<tr class="odd">
+<td align="left">Palau</td>
+<td align="left">Micronesia</td>
+</tr>
+<tr class="even">
+<td align="left">Papua New Guinea</td>
+<td align="left">Melanesia</td>
+</tr>
+<tr class="odd">
+<td align="left">Solomon Islands</td>
+<td align="left">Melanesia</td>
+</tr>
+<tr class="even">
+<td align="left">Vanuatu</td>
+<td align="left">Melanesia</td>
 </tr>
 </tbody>
 </table>
-<p>Some major site identifiers are two letters long and some are three. The “in string” function <code>instr(X, Y)</code> returns the 1-based index of the first occurrence of string Y in string X, or 0 if Y does not exist in X. The substring function <code>substr(X, I, [L])</code> returns the substring of X starting at index I, with an optional length L. Use these two functions to produce a list of unique major site identifiers. (For this data, the list should contain only “DR” and “MSK”).</p>
-</blockquote>
-</div>
 
 
 </div>

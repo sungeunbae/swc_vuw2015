@@ -112,22 +112,21 @@ SELECT name, population, region, headofstate FROM Country WHERE region="Australi
 Name                            Population  Region                          HeadOfState                   
 ------------------------------  ----------  ------------------------------  ------------------------------
 American Samoa                  68000       Polynesia                       George W. Bush                
-Australia                       18886000    Australia and New Zealand       Elisabeth II                  
-Cocos (Keeling) Islands         600         Australia and New Zealand       Elisabeth II                  
-Cook Islands                    20000       Polynesia                       Elisabeth II                  
-Christmas Island                2500        Australia and New Zealand       Elisabeth II                  
-Norfolk Island                  2000        Australia and New Zealand       Elisabeth II                  
-Niue                            2000        Polynesia                       Elisabeth II                  
-New Zealand                     3862000     Australia and New Zealand       Elisabeth II                  
-Pitcairn                        50          Polynesia                       Elisabeth II                  
+Australia                       18886000    Australia and New Zealand       Elizabeth II                  
+Cocos (Keeling) Islands         600         Australia and New Zealand       Elizabeth II                  
+Cook Islands                    20000       Polynesia                       Elizabeth II                  
+Christmas Island                2500        Australia and New Zealand       Elizabeth II                  
+Norfolk Island                  2000        Australia and New Zealand       Elizabeth II                  
+Niue                            2000        Polynesia                       Elizabeth II                  
+New Zealand                     3862000     Australia and New Zealand       Elizabeth II                  
+Pitcairn                        50          Polynesia                       Elizabeth II                  
 French Polynesia                235000      Polynesia                       Jacques Chirac                
-Tokelau                         2000        Polynesia                       Elisabeth II                  
+Tokelau                         2000        Polynesia                       Elizabeth II                  
 Tonga                           99000       Polynesia                       Taufa'ahau Tupou IV           
-Tuvalu                          12000       Polynesia                       Elisabeth II                  
+Tuvalu                          12000       Polynesia                       Elizabeth II                  
 Wallis and Futuna               15000       Polynesia                       Jacques Chirac                
 Samoa                           180000      Polynesia                       Malietoa Tanumafili II  
 
-(Name of the queen has a wrong spell - we will fix the data later in Chapter 8)
 Alternatively,
 we can use `IN` to see if a value is in a specific set:
 
@@ -138,18 +137,18 @@ SELECT name, population, region, headofstate FROM Country WHERE region IN ("Aust
 Name                            Population  Region                          HeadOfState                   
 ------------------------------  ----------  ------------------------------  ------------------------------
 American Samoa                  68000       Polynesia                       George W. Bush                
-Australia                       18886000    Australia and New Zealand       Elisabeth II                  
-Cocos (Keeling) Islands         600         Australia and New Zealand       Elisabeth II                  
-Cook Islands                    20000       Polynesia                       Elisabeth II                  
-Christmas Island                2500        Australia and New Zealand       Elisabeth II                  
-Norfolk Island                  2000        Australia and New Zealand       Elisabeth II                  
-Niue                            2000        Polynesia                       Elisabeth II                  
-New Zealand                     3862000     Australia and New Zealand       Elisabeth II                  
-Pitcairn                        50          Polynesia                       Elisabeth II                  
+Australia                       18886000    Australia and New Zealand       Elizabeth II                  
+Cocos (Keeling) Islands         600         Australia and New Zealand       Elizabeth II                  
+Cook Islands                    20000       Polynesia                       Elizabeth II                  
+Christmas Island                2500        Australia and New Zealand       Elizabeth II                  
+Norfolk Island                  2000        Australia and New Zealand       Elizabeth II                  
+Niue                            2000        Polynesia                       Elizabeth II                  
+New Zealand                     3862000     Australia and New Zealand       Elizabeth II                  
+Pitcairn                        50          Polynesia                       Elizabeth II                  
 French Polynesia                235000      Polynesia                       Jacques Chirac                
-Tokelau                         2000        Polynesia                       Elisabeth II                  
+Tokelau                         2000        Polynesia                       Elizabeth II                  
 Tonga                           99000       Polynesia                       Taufa'ahau Tupou IV           
-Tuvalu                          12000       Polynesia                       Elisabeth II                  
+Tuvalu                          12000       Polynesia                       Elizabeth II                  
 Wallis and Futuna               15000       Polynesia                       Jacques Chirac                
 Samoa                           180000      Polynesia                       Malietoa Tanumafili II  
 
@@ -159,39 +158,39 @@ If we *don't* use parentheses,
 we get this:
 
 ~~~ {.sql}
-SELECT name, population,region,headofstate FROM Country WHERE headofstate="Elisabeth II" AND region="Polynesia" OR region="Melanesia";
+SELECT name, population,region,headofstate FROM Country WHERE headofstate="Elizabeth II" AND region="Polynesia" OR region="Melanesia";
 ~~~
 
 Name                            Population  Region                          HeadOfState                   
 ------------------------------  ----------  ------------------------------  ------------------------------
-Cook Islands                    20000       Polynesia                       Elisabeth II                  
+Cook Islands                    20000       Polynesia                       Elizabeth II                  
 Fiji Islands                    817000      Melanesia                       Josefa Iloilo                 
 New Caledonia                   214000      Melanesia                       Jacques Chirac                
-Niue                            2000        Polynesia                       Elisabeth II                  
-Pitcairn                        50          Polynesia                       Elisabeth II                  
-Papua New Guinea                4807000     Melanesia                       Elisabeth II                  
-Solomon Islands                 444000      Melanesia                       Elisabeth II                  
-Tokelau                         2000        Polynesia                       Elisabeth II                  
-Tuvalu                          12000       Polynesia                       Elisabeth II                  
+Niue                            2000        Polynesia                       Elizabeth II                  
+Pitcairn                        50          Polynesia                       Elizabeth II                  
+Papua New Guinea                4807000     Melanesia                       Elizabeth II                  
+Solomon Islands                 444000      Melanesia                       Elizabeth II                  
+Tokelau                         2000        Polynesia                       Elizabeth II                  
+Tuvalu                          12000       Polynesia                       Elizabeth II                  
 Vanuatu                         190000      Melanesia                       John Bani   
 
-which is Polynesian countries with Queen Elisabeth II as the head of state,
+which is Polynesian countries with Queen Elizabeth II as the head of state,
 and *any* Melanesian countries.
 We probably want this instead:
 
 ~~~ {.sql}
-SELECT name, population,region,headofstate FROM Country WHERE headofstate="Elisabeth II" AND (region="Polynesia" OR region="Melanesia");
+SELECT name, population,region,headofstate FROM Country WHERE headofstate="Elizabeth II" AND (region="Polynesia" OR region="Melanesia");
 ~~~
 
 Name                            Population  Region                          HeadOfState                   
 ------------------------------  ----------  ------------------------------  ------------------------------
-Cook Islands                    20000       Polynesia                       Elisabeth II                  
-Niue                            2000        Polynesia                       Elisabeth II                  
-Pitcairn                        50          Polynesia                       Elisabeth II                  
-Papua New Guinea                4807000     Melanesia                       Elisabeth II                  
-Solomon Islands                 444000      Melanesia                       Elisabeth II                  
-Tokelau                         2000        Polynesia                       Elisabeth II                  
-Tuvalu                          12000       Polynesia                       Elisabeth II
+Cook Islands                    20000       Polynesia                       Elizabeth II                  
+Niue                            2000        Polynesia                       Elizabeth II                  
+Pitcairn                        50          Polynesia                       Elizabeth II                  
+Papua New Guinea                4807000     Melanesia                       Elizabeth II                  
+Solomon Islands                 444000      Melanesia                       Elizabeth II                  
+Tokelau                         2000        Polynesia                       Elizabeth II                  
+Tuvalu                          12000       Polynesia                       Elizabeth II
 
 We can also filter by partial matches.
 For example,
@@ -206,7 +205,7 @@ SELECT name, population,region,headofstate FROM Country WHERE region LIKE "%nesi
 Name                            Population  Region                          HeadOfState                   
 ------------------------------  ----------  ------------------------------  ------------------------------
 American Samoa                  68000       Polynesia                       George W. Bush                
-Cook Islands                    20000       Polynesia                       Elisabeth II                  
+Cook Islands                    20000       Polynesia                       Elizabeth II                  
 Fiji Islands                    817000      Melanesia                       Josefa Iloilo                 
 Micronesia, Federated States o  119000      Micronesia                      Leo A. Falcam                 
 Guam                            168000      Micronesia                      George W. Bush                
@@ -214,16 +213,16 @@ Kiribati                        83000       Micronesia                      Tebu
 Marshall Islands                64000       Micronesia                      Kessai Note                   
 Northern Mariana Islands        78000       Micronesia                      George W. Bush                
 New Caledonia                   214000      Melanesia                       Jacques Chirac                
-Niue                            2000        Polynesia                       Elisabeth II                  
+Niue                            2000        Polynesia                       Elizabeth II                  
 Nauru                           12000       Micronesia                      Bernard Dowiyogo              
-Pitcairn                        50          Polynesia                       Elisabeth II                  
+Pitcairn                        50          Polynesia                       Elizabeth II                  
 Palau                           19000       Micronesia                      Kuniwo Nakamura               
-Papua New Guinea                4807000     Melanesia                       Elisabeth II                  
+Papua New Guinea                4807000     Melanesia                       Elizabeth II                  
 French Polynesia                235000      Polynesia                       Jacques Chirac                
-Solomon Islands                 444000      Melanesia                       Elisabeth II                  
-Tokelau                         2000        Polynesia                       Elisabeth II                  
+Solomon Islands                 444000      Melanesia                       Elizabeth II                  
+Tokelau                         2000        Polynesia                       Elizabeth II                  
 Tonga                           99000       Polynesia                       Taufa'ahau Tupou IV           
-Tuvalu                          12000       Polynesia                       Elisabeth II                  
+Tuvalu                          12000       Polynesia                       Elizabeth II                  
 Vanuatu                         190000      Melanesia                       John Bani                     
 Wallis and Futuna               15000       Polynesia                       Jacques Chirac                
 Samoa                           180000      Polynesia                       Malietoa Tanumafili II        
@@ -244,8 +243,8 @@ Northern Mariana Islands        78000       Micronesia                      Geor
 New Caledonia                   214000      Melanesia                       Jacques Chirac                
 Nauru                           12000       Micronesia                      Bernard Dowiyogo              
 Palau                           19000       Micronesia                      Kuniwo Nakamura               
-Papua New Guinea                4807000     Melanesia                       Elisabeth II                  
-Solomon Islands                 444000      Melanesia                       Elisabeth II                  
+Papua New Guinea                4807000     Melanesia                       Elizabeth II                  
+Solomon Islands                 444000      Melanesia                       Elizabeth II                  
 Vanuatu                         190000      Melanesia                       John Bani                 
 
 
@@ -258,20 +257,20 @@ to give a second level of filtering:
 SELECT DISTINCT headofstate FROM Country WHERE region LIKE "%nesia";
 ~~~
 
-HeadOfState                   
-------------------------------
-George W. Bush                
-Elisabeth II                  
-Josefa Iloilo                 
-Leo A. Falcam                 
-Teburoro Tito                 
-Kessai Note                   
-Jacques Chirac                
-Bernard Dowiyogo              
-Kuniwo Nakamura               
-Taufa'ahau Tupou IV           
-John Bani                     
-Malietoa Tanumafili II     
+|HeadOfState                   |
+|------------------------------|
+|George W. Bush                |
+|Elizabeth II                  |
+|Josefa Iloilo                 |
+|Leo A. Falcam                 |
+|Teburoro Tito                 |
+|Kessai Note                   |
+|Jacques Chirac                |
+|Bernard Dowiyogo              |
+|Kuniwo Nakamura               |
+|Taufa'ahau Tupou IV           |
+|John Bani                     |
+|Malietoa Tanumafili II        |
 
 But remember:
 `DISTINCT` is applied to the values displayed in the chosen columns,
@@ -303,7 +302,6 @@ not to the entire rows as they are being processed.
 >
 > ~~~ {.sql}
 > SELECT name, population,region FROM Country WHERE population > 3000000 OR population < 4000000;
-
 > ~~~
 >
 > Explain why this is wrong,

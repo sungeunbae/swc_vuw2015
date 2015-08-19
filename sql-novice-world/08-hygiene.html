@@ -151,7 +151,7 @@ img {
 </tbody>
 </table>
 <p>In fact, we could use a single table that recorded all the information about each reading in each row, just as a spreadsheet would. The problem is that it’s very hard to keep data organized this way consistent: if we realize that the date of a particular visit to a particular site is wrong, we have to change multiple records in the database. What’s worse, we may have to guess which records to change, since other sites may also have been visited on that date.</p>
-<p>The fourth rule is that the units for every value should be stored explicitly. Our database doesn’t do this, and that’s a problem: For example, <code>GNP</code> in <code>Country</code> table is given in unit of million dollars. New Zealand’s GNP, 54669.0 must be interpreted as 54,669,000,000 dollars. However, it is not explicitly mandated and someone may enter a record in full amount instead of truncating six decimal places. We can guarantee the data integrity if this ever happens.</p>
+<p>The fourth rule is that the units for every value should be stored explicitly. Our database doesn’t do this, and that’s a problem: For example, <code>GNP</code> in <code>Country</code> table is given in unit of million dollars. New Zealand’s GNP, 54669.0 must be interpreted as 54,669,000,000 dollars. However, it is not explicitly mandated and someone may enter a record in full amount instead of truncating six decimal places. We can guarantee the integrity of our data if this ever happens.</p>
 <blockquote>
 <h2>Identifying Atomic Values</h2>
 <p>Which of the following are atomic values? Which are not? Why?</p>
