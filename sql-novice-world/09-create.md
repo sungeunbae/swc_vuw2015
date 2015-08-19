@@ -206,14 +206,15 @@ INSERT INTO JustLatLong SELECT lat, long FROM Site;
 
 > ## Importing CSV {.challenge}
 
-> If you have [CSV](reference.html#comma-separated-values) files, you can import the data using SQLite's CSV import feature
+> If you have [CSV](reference.html#comma-separated-values) files, you can import the data using SQLite's CSV import feature.
+>
 > First, you need to create the table. You can enter the SQL commands for creating tables. Alternativey, you can execute `create_tables.sql` 
 > (which already contains the SQL commands) by:
 
 ~~~{.sql}
 .read create_tables.sql
 ~~~
-> Secondly, you need to set the mode to load CSV
+> Secondly, you need to set the mode to load CSV format correctly.
 
 ~~~{.sql}
 .mode csv
