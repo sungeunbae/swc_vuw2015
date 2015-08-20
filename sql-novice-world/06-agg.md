@@ -146,7 +146,7 @@ Name        total_population  avg_life
 Samoa       633050            70.7333333333333
 
 
-This doesn't really make sense - total population and average life expenctancy are for all countries in Polynesia, not Samoa alone - Then why does Samoa appear? 
+This doesn't really make sense - total population and average life expectancy are for all countries in Polynesia, not Samoa alone - Then why does Samoa appear? 
 
 The answer is that when it has to aggregate a field, but isn't told how to, the database manager chooses a random value from the input set.
 
@@ -165,7 +165,7 @@ Wallis and Futuna  19050
 
 Here, average life expectancy is all NULL because there was no values to aggregate.
 
-Now, let's try something more meaningful. We wish to know the number of countries and the average life expenctancy in different continents.
+Now, let's try something more meaningful. We wish to know the number of countries and the average life expectancy in different continents.
 
 > ## Find all regions {.challenge}
 > Write a query that produce a list of all continents.
@@ -339,21 +339,21 @@ this query:
     (it doesn't matter which ones,
     since they're all equal).
 
-> ## Counting countries represented by the Queen {.challenge}
+> ### Counting countries represented by the Queen {.challenge}
 >
 > How many countries have "Elizabeth II" as the head of state and what is their average life expectancy?
 
-> ## Averaging with NULL {.challenge}
+> ### Averaging with NULL {.challenge}
 >
 > The average of a set of values is the sum of the values
 > divided by the number of values.
 > Does this mean that the `avg` function returns 2.0 or 3.0
 > when given the values 1.0, `null`, and 5.0?
 
-> ## What Does This Query Do? {.challenge}
+> ### What Does This Query Do? {.challenge}
 >
-> We worked out the average life expectancy of British commonwealth country (represented by the Queen). We want to calculate the 
-> difference between the life expectancy of each individual commonweath nation and the average of all commonwealth nations.
+> We worked out the average life expectancy of countries represented by the Queen. We want to calculate the 
+> difference between the life expectancy of each of those nations and the average value.
 > We write the query:
 >
 > ~~~ {.sql}
@@ -362,15 +362,39 @@ this query:
 >
 > What does this actually produce, and why?
 
-> ## Ordering When Concatenating {.challenge}
+> ### Ordering When Concatenating {.challenge}
 >
 > The function `group_concat(field, separator)`
 > concatenates all the values in a field
 > using the specified separator character
 > (or ',' if the separator isn't specified).
-> Use this to produce a one-line list of continent' names,
-> such as:
->
+
 > ~~~ {.sql}
-> North America,Asia,Africa,Europe,South America,Oceania,Antarctica
+SELECT DISTINCT continent FROM Country;
 > ~~~
+
+|Continent    |
+|-------------|
+|North America|
+|Asia         |
+|Africa       |
+|Europe       |
+|South America|
+|Oceania      |
+|Antarctica   |
+
+If we use `group_concat()` function on this result by `SELECT`ing `FROM` the output of this query,
+
+> ~~~{.sql}
+SELECT group_concat(continent, ", ") FROM (SELECT DISTINCT continent FROM Country);
+> ~~~
+
+We can get a one line list of continents.
+
+|group_concat(continent, ", ")                                          |
+|-----------------------------------------------------------------------|
+|North America, Asia, Africa, Europe, South America, Oceania, Antarctica|
+
+What should you do to get this list alphabetically sorted?
+
+

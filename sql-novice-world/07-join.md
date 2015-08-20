@@ -30,7 +30,7 @@ AFG          Turkmenian  F           1.9
 AFG          Uzbek       F           8.8       
 AGO          Ambo        F           2.4 
 
-This table gives languages spoken in each country. However, country name is not kept here. Each country is distingusied by `CountryCode`. Of course, we know this `CountryCode` matches `code` field in `Country` table.
+This table gives languages spoken in each country. However, country name is not kept here. Each country is distinguished by `CountryCode`. Of course, we know this `CountryCode` matches `code` field in `Country` table.
 
 ~~~{.sql}
 SELECT Code,Name FROM Country LIMIT 10;
@@ -49,7 +49,7 @@ ARE         United Ara
 ARG         Argentina 
 ARM         Armenia   
 
-To display the country name and the languages spoken by each contry, we need to combine these tables somehow.
+To display the country name and the languages spoken by each country, we need to combine these tables somehow.
 
 The SQL command to do this is `JOIN`.
 To see how it works,
@@ -170,7 +170,7 @@ There are differences in how they affect [outer joins][OUTER],
 but that's beyond the scope of this lesson.
 Once we add this to our query,
 the database manager throws away records
-that combined information about two different countires,
+that combined information about two different countries,
 leaving us with just the ones we want.
 
 Notice that we used `Table.field` to specify field names
@@ -226,7 +226,7 @@ New Zealand                     Lower Hutt                      Maori
 
 
 We can tell which records from `Country`, `City`, and `CountryLanguage`
-correspond with each otherbecause those tables contain [primary keys](reference.html#primary-key)
+correspond with each other because those tables contain [primary keys](reference.html#primary-key)
 and [foreign keys](reference.html#foreign-key). A primary key is a value,
 or combination of values, that uniquely identifies each record in a table.
 A foreign key is a value (or combination of values) from one table
@@ -273,15 +273,15 @@ rowid  CountryCod  Language                        IsOfficial  Percentage
 9      AFG         Uzbek                           F           8.8       
 10     AGO         Ambo                            F           2.4  
 
-> ## Listing primary languages {.challenge}
+> ### Listing primary languages {.challenge}
 >
 > Write a query that lists country name and the primary language (spoken by over 50% of its population. Use `percentage` field)
 
-> ## Listing countries where English is official, but not popular {.challenge}
+> ### Listing countries where English is official, but not popular {.challenge}
 >
 > Write a query that lists the name of countries where English is its official language but it is spoken less than 50% of its population. (use `isofficial` field, whose value is either "T" or "F")
 
-> ## Reading Queries {.challenge}
+> ### Reading Queries {.challenge}
 >
 > Describe in your own words what the following query produces:
 >
@@ -292,7 +292,7 @@ rowid  CountryCod  Language                        IsOfficial  Percentage
 > WHERE language LIKE "%Chinese%";
 > ~~~
 
-> ## Population of Chinese speakers {.challenge}
+> ### Population of World Chinese speakers {.challenge}
 >
 > Modify the query above and work out the world population of Chinese speakers.
 > Can you also find the population of English speakers?

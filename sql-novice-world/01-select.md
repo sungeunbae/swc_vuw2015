@@ -27,7 +27,7 @@ The database manager does whatever lookups and calculations the query specifies,
 returning the results in a tabular form
 that we can then use as a starting point for further queries.
 
-> ## Changing database managers {.callout}
+> ### Changing database managers {.callout}
 >
 > Every database manager --- Oracle,
 > IBM DB2, PostgreSQL, MySQL, Microsoft Access, and SQLite --- stores
@@ -62,7 +62,7 @@ ID          Name        CountryCode  District    Population
 10          Tilburg     NLD          Noord-Brab  193238  
 ...
 
-> **Country**: Countires in the world and their brief information
+> **Country**: Countries in the world and their brief information
 >
 
 Code  Name                  Continent      Region                     Population  LifeExpect  GNP         GovernmentForm                  HeadOfState         
@@ -221,11 +221,11 @@ ID          Name        CountryCode  District    Population
 4           Mazar-e-Sh  AFG          Balkh       127800    
 5           Amsterdam   NLD          Noord-Holl  731200    
 
-> ## Selecting Site Names {.challenge}
+> ### Selecting Continent names {.challenge}
 >
 > Write a query that selects only Continent names from the `Country` table.
 
-> ## Query Style {.challenge}
+> ### Query Style {.challenge}
 >
 > Many people format queries as:
 >

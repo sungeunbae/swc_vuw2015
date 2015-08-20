@@ -198,7 +198,7 @@ img {
 </tr>
 </tbody>
 </table>
-<p>When we run the query, the expression <code>gnp/populatioon*1000000</code> is evaluated for each row. Expressions can use any of the fields, all of usual arithmetic operators,and a variety of common functions. (Exactly which ones depends on which database manager is being used.) For example,we can round to two decimal places</p>
+<p>When we run the query, the expression <code>gnp/population*1000000</code> is evaluated for each row. Expressions can use any of the fields, all of usual arithmetic operators,and a variety of common functions. (Exactly which ones depends on which database manager is being used.) For example,we can round to two decimal places</p>
 <pre class="sql"><code>SELECT name,gnp,population,round(gnp/population*1000000,2) FROM Country WHERE name in (&quot;New Zealand&quot;,&quot;Australia&quot;,&quot;United Kingdom&quot;,&quot;Canada&quot;,&quot;United States&quot;);</code></pre>
 <table>
 <thead>
@@ -359,11 +359,11 @@ img {
 </tbody>
 </table>
 <blockquote>
-<h2>Converting to New Zealand dollar</h2>
+<h3>Converting to New Zealand dollar</h3>
 <p>GNP per capita we computed was in US dollar. In November 2000, about the time this data was compiled, NZD/USD exchange rate dropped to historic low 0.39. Modify the query for GNP per capita to output the amount in NZD using this exchange rate.</p>
 </blockquote>
 <blockquote>
-<h2>Unions</h2>
+<h3>Unions</h3>
 <p>The <code>UNION</code> operator combines the results of two queries:</p>
 <pre class="sql"><code>SELECT * FROM City WHERE CountryCode=&quot;NZL&quot; UNION SELECT * FROM City WHERE CountryCode=&quot;AUS&quot;;</code></pre>
 </blockquote>

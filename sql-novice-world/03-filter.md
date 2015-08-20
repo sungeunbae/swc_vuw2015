@@ -102,7 +102,7 @@ Manukau               281800
 
 -->
 
-If we want to find countries either in "Autralia and New Zealand" OR in "Polynesia" region,
+If we want to find countries either in "Australia and New Zealand" OR in "Polynesia" region,
 we can combine the tests using `OR`:
 
 ~~~ {.sql}
@@ -295,7 +295,7 @@ not to the entire rows as they are being processed.
 > or write a small program to generate ten thousand random (but plausible) records
 > and use that.
 
-> ## Fix This Query {.challenge}
+> ### Fix This Query {.challenge}
 >
 > Suppose we want to select all countries whose population is between 3 million and 4 million.
 > Our first query is:
@@ -307,12 +307,12 @@ not to the entire rows as they are being processed.
 > Explain why this is wrong,
 > and rewrite the query so that it is correct.
 
-> ## Finding Outliers {.challenge}
+> ### Finding Outliers {.challenge}
 >
 > Write a query that selects records from Country with population of 0.
 > Do they make sense?
 
-> ## Matching Patterns {.challenge}
+> ### Matching Patterns {.challenge}
 >
 > Which of these expressions are true?
 >

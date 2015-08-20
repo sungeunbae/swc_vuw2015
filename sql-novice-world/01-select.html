@@ -76,7 +76,7 @@ img {
 <p>A <a href="reference.html#relational-database">relational database</a> is a way to store and manipulate information. Databases are arranged as <a href="reference.html#table">tables</a>. Each table has columns (also known as <a href="reference.html#field">fields</a>) that describe the data, and rows (also known as <a href="reference.html#record">records</a>) which contain the data.</p>
 <p>When we are using a spreadsheet, we put formulas into cells to calculate new values based on old ones. When we are using a database, we send commands (usually called <a href="reference.html#query">queries</a>) to a <a href="reference.html#database-manager">database manager</a>: a program that manipulates the database for us. The database manager does whatever lookups and calculations the query specifies, returning the results in a tabular form that we can then use as a starting point for further queries.</p>
 <blockquote>
-<h2>Changing database managers</h2>
+<h3>Changing database managers</h3>
 <p>Every database manager — Oracle, IBM DB2, PostgreSQL, MySQL, Microsoft Access, and SQLite — stores data in a different way, so a database created with one cannot be used directly by another. However, every database manager can import and export data in a variety of formats, like .csv, so it <em>is</em> possible to move information from one to another.</p>
 </blockquote>
 <p>Queries are written in a language called <a href="reference.html#sql">SQL</a>, which stands for “Structured Query Language”. SQL provides hundreds of different ways to analyze and recombine data. We will only look at a handful of queries, but that handful accounts for most of what scientists do.</p>
@@ -175,7 +175,7 @@ img {
 </tbody>
 </table>
 <blockquote>
-<p><strong>Country</strong>: Countires in the world and their brief information</p>
+<p><strong>Country</strong>: Countries in the world and their brief information</p>
 </blockquote>
 <table>
 <thead>
@@ -716,11 +716,11 @@ img {
 </tbody>
 </table>
 <blockquote>
-<h2>Selecting Site Names</h2>
+<h3>Selecting Continent names</h3>
 <p>Write a query that selects only Continent names from the <code>Country</code> table.</p>
 </blockquote>
 <blockquote>
-<h2>Query Style</h2>
+<h3>Query Style</h3>
 <p>Many people format queries as:</p>
 <pre><code>SELECT code, name FROM country;</code></pre>
 <p>or as:</p>

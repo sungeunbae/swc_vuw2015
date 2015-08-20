@@ -108,7 +108,7 @@ Let's insert NZ Sign Language - The simplest form of `INSERT` statement lists va
 INSERT INTO CountryLanguage values('NZL','NZ Sign Language','T', 0.51);
 ~~~
 
-Similarly, we can insert Samon and Hindi.
+Similarly, we can insert Samoan and Hindi.
 
 ~~~ {.sql}
 INSERT INTO CountryLanguage values('NZL','Samoan','F', 2.17);
@@ -161,7 +161,7 @@ DELETE FROM Country WHERE code = 'NZL';
 
 What is going to happen? Our `City` table would still contain a number of New Zealand cities and 
 `CountryLanguage` table also have a few records related to New Zealand. 
-This shoundn't happen because `Country.code` is a foreign key into the `City` table, and the `CountryLanguage` table,
+This shouldn't happen because `Country.code` is a foreign key into the `City` table, and the `CountryLanguage` table,
 and all our queries assume there will be a row in the `City` and `CountryLanguage` matching every value in the `Country`.
 
 This problem is called [referential integrity](reference.html#referential-integrity):
@@ -185,7 +185,7 @@ INSERT INTO JustLatLong SELECT lat, long FROM Site;
 ~~~
 --->
 
-> ## Hybrid Storage Models {.callout}
+> ### Hybrid Storage Models {.callout}
 >
 > Many applications use a hybrid storage model
 > instead of putting everything into a database:
@@ -199,39 +199,39 @@ INSERT INTO JustLatLong SELECT lat, long FROM Site;
 > the database inside the application keeps track of the MP3 files,
 > but the files themselves live on disk.
 
-> ## Replacing NULL {.challenge}
+> ### Replacing NULL {.challenge}
 >
 > Write an SQL statement to replace all uses of `null` in
 > `Country.headofstate` with the string `'unknown'`.
 
-> ## Importing CSV {.challenge}
-
+> ### Importing CSV {.challenge}
+>
 > If you have [CSV](reference.html#comma-separated-values) files, you can import the data using SQLite's CSV import feature.
 >
-> First, you need to create the table. You can enter the SQL commands for creating tables. Alternativey, you can execute `create_tables.sql` 
+> First, you need to create the table. You can enter the SQL commands for creating tables. Alternatively, you can execute `create_tables.sql` 
 > (which already contains the SQL commands) by:
-
-~~~{.sql}
-.read create_tables.sql
-~~~
+>
+>~~~{.sql}
+>.read create_tables.sql
+>~~~
 > Secondly, you need to set the mode to load CSV format correctly.
-
-~~~{.sql}
-.mode csv
-~~~
-
+>
+>~~~{.sql}
+>.mode csv
+>~~~
+>
 > Finally, import each CSV file into table.
-
-~~~{.sql}
-.import country.csv Country
-.import city.csv City
-.import countrylanguage.csv CountryLanguage
-~~~
-
+>
+>~~~{.sql}
+>.import country.csv Country
+>.import city.csv City
+>.import countrylanguage.csv CountryLanguage
+>~~~
+>
 > Note: Importing from CSV might have an issue in handling NULL values because an empty (ie. NULL) value in CSV is an empty string (ie. ""), 
 > which might not be exactly what you expect.
 
-> ## Backing Up with SQL {.challenge}
+> ### Backing Up with SQL {.challenge}
 >
 > SQLite has several administrative commands that aren't part of the
 > SQL standard.  One of them is `.dump`, which prints the SQL commands

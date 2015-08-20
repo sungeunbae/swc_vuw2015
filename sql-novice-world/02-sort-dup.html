@@ -74,7 +74,91 @@ img {
 </blockquote>
 <p>Data is often redundant, so queries often return redundant information. For example, if we select the languages spoken in countries from the CountryLanguage table, we get this:</p>
 <pre class="sql"><code>SELECT continent FROM Country;</code></pre>
-<p>|Continent | |————-| |North America| |Asia | |Africa | |North America| |Europe | |Europe | |North America| |Asia | |South America| |Asia | |Oceania | |Antarctica | |Antarctica | |North America| |Oceania | |Europe | |Asia | |Africa | |Europe | |Africa | |Africa | |Asia | |Europe | |Asia | |North America| ….</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Continent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">North America</td>
+</tr>
+<tr class="even">
+<td align="left">Asia</td>
+</tr>
+<tr class="odd">
+<td align="left">Africa</td>
+</tr>
+<tr class="even">
+<td align="left">North America</td>
+</tr>
+<tr class="odd">
+<td align="left">Europe</td>
+</tr>
+<tr class="even">
+<td align="left">Europe</td>
+</tr>
+<tr class="odd">
+<td align="left">North America</td>
+</tr>
+<tr class="even">
+<td align="left">Asia</td>
+</tr>
+<tr class="odd">
+<td align="left">South America</td>
+</tr>
+<tr class="even">
+<td align="left">Asia</td>
+</tr>
+<tr class="odd">
+<td align="left">Oceania</td>
+</tr>
+<tr class="even">
+<td align="left">Antarctica</td>
+</tr>
+<tr class="odd">
+<td align="left">Antarctica</td>
+</tr>
+<tr class="even">
+<td align="left">North America</td>
+</tr>
+<tr class="odd">
+<td align="left">Oceania</td>
+</tr>
+<tr class="even">
+<td align="left">Europe</td>
+</tr>
+<tr class="odd">
+<td align="left">Asia</td>
+</tr>
+<tr class="even">
+<td align="left">Africa</td>
+</tr>
+<tr class="odd">
+<td align="left">Europe</td>
+</tr>
+<tr class="even">
+<td align="left">Africa</td>
+</tr>
+<tr class="odd">
+<td align="left">Africa</td>
+</tr>
+<tr class="even">
+<td align="left">Asia</td>
+</tr>
+<tr class="odd">
+<td align="left">Europe</td>
+</tr>
+<tr class="even">
+<td align="left">Asia</td>
+</tr>
+<tr class="odd">
+<td align="left">North America</td>
+</tr>
+</tbody>
+</table>
+<p>…</p>
 <p>We can eliminate the redundant output by adding the <code>DISTINCT</code> keyword to our query:</p>
 <pre class="sql"><code>SELECT DISTINCT continent FROM Country;</code></pre>
 <table>
@@ -270,7 +354,7 @@ img {
 <pre class="sql"><code>.width 15 30
 SELECT DISTINCT continent,region FROM Country;</code></pre>
 </blockquote>
-<p>Our next task is to study population of each countryby looking at the <code>Country</code> table. As we mentioned earlier, database records are not stored in any particular order. This means that query results aren’t necessarily sorted, and even if they are, we often want to sort them in a different way, e.g., by country code instead of by name. We can do this in SQL by adding an <code>ORDER BY</code> clause to our query:</p>
+<p>Our next task is to study population of each country by looking at the <code>Country</code> table. As we mentioned earlier, database records are not stored in any particular order. This means that query results aren’t necessarily sorted, and even if they are, we often want to sort them in a different way, e.g., by country code instead of by name. We can do this in SQL by adding an <code>ORDER BY</code> clause to our query:</p>
 <pre class="sql"><code>SELECT name, continent, population FROM Country ORDER BY name;</code></pre>
 <table>
 <thead>
@@ -587,12 +671,12 @@ SELECT DISTINCT continent,region FROM Country;</code></pre>
 </table>
 <p>This query gives us a good idea of which country in which continent has what size of population.</p>
 <blockquote>
-<h2>Find Distinct government form</h2>
-<p>Write a query that selects distinct government form from the <code>Country</code> table. Order the output alphabethcally.</p>
+<h3>Find distinct government forms</h3>
+<p>Write a query that selects distinct government form from the <code>Country</code> table. Order the output alphabetically.</p>
 </blockquote>
 <blockquote>
-<h2>Displaying continent and government form</h2>
-<p>Write a query that displays continent and government form from <code>Country</code> table ordered by continent then by government form. Remove duplicates from the ouput.</p>
+<h3>Displaying pairs of continent and government form</h3>
+<p>Write a query that displays continent and government form from <code>Country</code> table ordered by continent then by government form. Remove duplicates from the output.</p>
 </blockquote>
 
 

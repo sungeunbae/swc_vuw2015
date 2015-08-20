@@ -19,6 +19,7 @@ we get this:
 SELECT continent FROM Country;
 ~~~
 
+
 |Continent    |
 |-------------|
 |North America|
@@ -46,7 +47,8 @@ SELECT continent FROM Country;
 |Europe       |
 |Asia         |
 |North America|
-....
+
+...
 
 We can eliminate the redundant output by adding the `DISTINCT` keyword
 to our query:
@@ -128,7 +130,7 @@ Oceania          Polynesia
 > ~~~
 
 
-Our next task is to study population of each countryby looking at the `Country` table.
+Our next task is to study population of each country by looking at the `Country` table.
 As we mentioned earlier,
 database records are not stored in any particular order.
 This means that query results aren't necessarily sorted,
@@ -228,11 +230,11 @@ Argentina        South America                   37032000
 
 This query gives us a good idea of which country in which continent has what size of population.
 
-> ## Find Distinct government form {.challenge}
-> Write a query that selects distinct government form from the `Country` table. Order the output alphabethcally.
+> ### Find distinct government forms {.challenge}
+> Write a query that selects distinct government form from the `Country` table. Order the output alphabetically.
 
-> ## Displaying continent and government form {.challenge}
+> ### Displaying pairs of continent and government form {.challenge}
 >
 > Write a query that displays continent and government form from `Country` table ordered by continent then by government form.
-> Remove duplicates from the ouput.
+> Remove duplicates from the output.
 

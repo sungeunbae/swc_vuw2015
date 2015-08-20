@@ -53,7 +53,7 @@ Tuvalu                          12000       66.3
 Samoa                           180000      69.2
 
 we get 3 results,
-and if we select the ones with life expencanty higher than 70:
+and if we select the ones with life expectancy higher than 70:
 
 ~~~ {.sql}
 SELECT name,population,lifeexpectancy FROM Country WHERE region="Polynesia" AND lifeexpectancy >= 70;
@@ -66,7 +66,7 @@ Cook Islands                    20000       71.1
 French Polynesia                235000      74.8   
 
 we get 3,
-but those records with null life expentancy aren't in either set of results.
+but those records with null life expectancy aren't in either set of results.
 
 The reason is that
 `null< 70`
@@ -129,7 +129,6 @@ French Polynesia                235000      74.8
 Tonga                           99000       67.9           
 Tuvalu                          12000       66.3           
 Samoa                           180000      69.2           
-sqlite> 
 
 
 Null values can cause headaches wherever they appear.
@@ -158,7 +157,7 @@ Name                                                HeadOfState
 French Southern territories                         Jacques Chirac      
 Bouvet Island                                       Harald V 
 
-but this query filters omits the record of Antactica because its head of state is `null` and 
+but this query filters omits the record of Antarctica because its head of state is `null` and 
 the `!=` comparison produces `null`,
 so the record isn't kept in our results.
 If we want to keep these records
@@ -177,13 +176,13 @@ Bouvet Island                                       Harald V
 
 In contrast to arithmetic or Boolean operators, aggregation functions that combine multiple values, such as `min`, `max` or `avg`, *ignore* `null` values. In the majority of cases, this is a desirable output: for example, unknown values are thus not affecting our data when we are averaging it. Aggregation functions will be addressed in more detail in [the next section](06-agg.html).
 
-> ## Sorting by Known Date {.challenge}
+> ### Sorting by life expectancy {.challenge}
 >
 > Write a query that sorts the records of Polynesian countries (show name, population and life expectancy only) by life expectancy,
 > omitting entries for which the life expectancy is not known
 > (i.e., is null).
 
-> ## NULL in a Set {.challenge}
+> ### NULL in a Set {.challenge}
 >
 > What do you expect the query:
 >
@@ -194,13 +193,13 @@ In contrast to arithmetic or Boolean operators, aggregation functions that combi
 > to produce?
 > What does it actually produce?
 
-> ## Pros and Cons of Sentinels {.challenge}
+> ### Pros and Cons of Sentinels {.challenge}
 >
 > Some database designers prefer to use
 > a [sentinel value](reference.html#sentinel-value))
 > to mark missing data rather than `null`.
 > For example,
-> they will use -1.0 for missing life expectancy (since alcutal life expectancy cannot be negative)
+> they will use -1.0 for missing life expectancy (since actual life expectancy cannot be negative)
 > or "N/A" to mark a missing head of state
 > What does this simplify?
 > What burdens or risks does it introduce?

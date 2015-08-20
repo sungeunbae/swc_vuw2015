@@ -148,7 +148,7 @@ img {
 </tr>
 </tbody>
 </table>
-<p>This table gives languages spoken in each country. However, country name is not kept here. Each country is distingusied by <code>CountryCode</code>. Of course, we know this <code>CountryCode</code> matches <code>code</code> field in <code>Country</code> table.</p>
+<p>This table gives languages spoken in each country. However, country name is not kept here. Each country is distinguished by <code>CountryCode</code>. Of course, we know this <code>CountryCode</code> matches <code>code</code> field in <code>Country</code> table.</p>
 <pre class="sql"><code>SELECT Code,Name FROM Country LIMIT 10;</code></pre>
 <table>
 <thead>
@@ -200,7 +200,7 @@ img {
 </tr>
 </tbody>
 </table>
-<p>To display the country name and the languages spoken by each contry, we need to combine these tables somehow.</p>
+<p>To display the country name and the languages spoken by each country, we need to combine these tables somehow.</p>
 <p>The SQL command to do this is <code>JOIN</code>. To see how it works, let’s start by joining the <code>Country</code> and <code>CountryLanguage</code> tables:</p>
 <p>(Press Ctrl+C as soon as you enter the following query)</p>
 <pre class="sql"><code>SELECT * FROM Country JOIN CountryLanguage;</code></pre>
@@ -602,7 +602,7 @@ LIMIT 30;</code></pre>
 </tr>
 </tbody>
 </table>
-<p><code>ON</code> is very similar to <code>WHERE</code>, and for all the queries in this lesson you can use them interchangeably. There are differences in how they affect <a href="http://en.wikipedia.org/wiki/Join_%28SQL%29#Outer_join">outer joins</a>, but that’s beyond the scope of this lesson. Once we add this to our query, the database manager throws away records that combined information about two different countires, leaving us with just the ones we want.</p>
+<p><code>ON</code> is very similar to <code>WHERE</code>, and for all the queries in this lesson you can use them interchangeably. There are differences in how they affect <a href="http://en.wikipedia.org/wiki/Join_%28SQL%29#Outer_join">outer joins</a>, but that’s beyond the scope of this lesson. Once we add this to our query, the database manager throws away records that combined information about two different countries, leaving us with just the ones we want.</p>
 <p>Notice that we used <code>Table.field</code> to specify field names in the output of the join. We do this because tables can have fields with the same name, and we need to be specific which ones we’re talking about.</p>
 <p>In this example, no two table have fields with the same name, so we can get the same result with <code>field</code> name alone.</p>
 <pre class="sql"><code>SELECT code, name, countrycode,language 
@@ -717,7 +717,7 @@ WHERE country.name=&quot;New Zealand&quot;;</code></pre>
 </tr>
 </tbody>
 </table>
-<p>We can tell which records from <code>Country</code>, <code>City</code>, and <code>CountryLanguage</code> correspond with each otherbecause those tables contain <a href="reference.html#primary-key">primary keys</a> and <a href="reference.html#foreign-key">foreign keys</a>. A primary key is a value, or combination of values, that uniquely identifies each record in a table. A foreign key is a value (or combination of values) from one table that identifies a unique record in another table. Another way of saying this is that a foreign key is the primary key of one table that appears in some other table. In our database, <code>Country.code</code> is the primary key in the <code>Country</code> table, while <code>City.countrycode</code> is a foreign key relating the <code>City</code> table’s entries to entries in <code>Country</code>. (Note: We didn’t use foreign keys when creating this db as it is disabled by default.)(<a href="https://www.sqlite.org/foreignkeys.html" class="uri">https://www.sqlite.org/foreignkeys.html</a>)</p>
+<p>We can tell which records from <code>Country</code>, <code>City</code>, and <code>CountryLanguage</code> correspond with each other because those tables contain <a href="reference.html#primary-key">primary keys</a> and <a href="reference.html#foreign-key">foreign keys</a>. A primary key is a value, or combination of values, that uniquely identifies each record in a table. A foreign key is a value (or combination of values) from one table that identifies a unique record in another table. Another way of saying this is that a foreign key is the primary key of one table that appears in some other table. In our database, <code>Country.code</code> is the primary key in the <code>Country</code> table, while <code>City.countrycode</code> is a foreign key relating the <code>City</code> table’s entries to entries in <code>Country</code>. (Note: We didn’t use foreign keys when creating this db as it is disabled by default.)(<a href="https://www.sqlite.org/foreignkeys.html" class="uri">https://www.sqlite.org/foreignkeys.html</a>)</p>
 <p>Most database designers believe that every table should have a well-defined primary key. They also believe that this key should be separate from the data itself, so that if we ever need to change the data, we only need to make one change in one place. One easy way to do this is to create an arbitrary, unique ID for each record as we add it to the database. This is actually very common: those IDs have names like “student numbers” and “patient numbers”, and they almost always turn out to have originally been a unique record identifier in some database system or other. As the query below demonstrates, SQLite <a href="https://www.sqlite.org/lang_createtable.html#rowid">automatically numbers records</a> as they’re added to tables, and we can use those record numbers in queries:</p>
 <pre class="sql"><code>SELECT rowid, * FROM CountryLanguage LIMIT 10;</code></pre>
 <table>
@@ -804,15 +804,15 @@ WHERE country.name=&quot;New Zealand&quot;;</code></pre>
 </tbody>
 </table>
 <blockquote>
-<h2>Listing primary languages</h2>
+<h3>Listing primary languages</h3>
 <p>Write a query that lists country name and the primary language (spoken by over 50% of its population. Use <code>percentage</code> field)</p>
 </blockquote>
 <blockquote>
-<h2>Listing countries where English is official, but not popular</h2>
+<h3>Listing countries where English is official, but not popular</h3>
 <p>Write a query that lists the name of countries where English is its official language but it is spoken less than 50% of its population. (use <code>isofficial</code> field, whose value is either “T” or “F”)</p>
 </blockquote>
 <blockquote>
-<h2>Reading Queries</h2>
+<h3>Reading Queries</h3>
 <p>Describe in your own words what the following query produces:</p>
 <pre class="sql"><code>SELECT name, language, population, percentage*population/100 
 FROM Country 
@@ -820,7 +820,7 @@ JOIN Countrylanguage ON code=countrycode
 WHERE language LIKE &quot;%Chinese%&quot;;</code></pre>
 </blockquote>
 <blockquote>
-<h2>Population of Chinese speakers</h2>
+<h3>Population of World Chinese speakers</h3>
 <p>Modify the query above and work out the world population of Chinese speakers. Can you also find the population of English speakers?</p>
 </blockquote>
 

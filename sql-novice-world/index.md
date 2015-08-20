@@ -29,7 +29,7 @@ These lessons will show how to use a database to explore the statistical data.
 > Check [Discussion](discussion.html) for database setup instructions
 
 ## Topics
-
+0.  [Setting Up](00-setup.html)
 1.  [Selecting Data](01-select.html)
 2.  [Sorting and Removing Duplicates](02-sort-dup.html)
 3.  [Filtering](03-filter.html)
@@ -39,7 +39,8 @@ These lessons will show how to use a database to explore the statistical data.
 7.  [Combining Data](07-join.html)
 8.  [Data Hygiene](08-hygiene.html)
 9.  [Creating and Modifying Data](09-create.html)
-10. [Programming with Databases](10-prog.html)
+10. Programming with Databases [R](10-r-prog.html) [Python](10-python-prog.html)
+
 
 ## Other Resources
 

@@ -186,7 +186,7 @@ CREATE TABLE `CountryLanguage` (`CountryCode` TEXT,`Language` TEXT, `IsOfficial`
 </table>
 <p>Let’s insert NZ Sign Language - The simplest form of <code>INSERT</code> statement lists values in order:</p>
 <pre class="sql"><code>INSERT INTO CountryLanguage values('NZL','NZ Sign Language','T', 0.51);</code></pre>
-<p>Similarly, we can insert Samon and Hindi.</p>
+<p>Similarly, we can insert Samoan and Hindi.</p>
 <pre class="sql"><code>INSERT INTO CountryLanguage values('NZL','Samoan','F', 2.17);
 INSERT INTO CountryLanguage values('NZL','Hindi','F', 1.67);</code></pre>
 <p>Modifying existing records is done using the <code>UPDATE</code> statement. To do this we tell the database which table we want to update, what we want to change the values to for any or all of the fields, and under what conditions we should update the values.</p>
@@ -240,7 +240,7 @@ UPDATE CountryLanguage SET percentage=3.74, isofficial='T' WHERE countrycode='NZ
 <p>Be careful to not forget the <code>where</code> clause or the update statement will modify <em>all</em> of the records in the database.</p>
 <p>Deleting records can be a bit trickier, because we have to ensure that the database remains internally consistent. If all we care about is a single table, we can use the <code>DELETE</code> command with a <code>WHERE</code> clause that matches the records we want to discard. For example, if we wish to delete a country, we can remove from the <code>Country</code> table like this:</p>
 <pre class="sql"><code>DELETE FROM Country WHERE code = 'NZL';</code></pre>
-<p>What is going to happen? Our <code>City</code> table would still contain a number of New Zealand cities and <code>CountryLanguage</code> table also have a few records related to New Zealand. This shoundn’t happen because <code>Country.code</code> is a foreign key into the <code>City</code> table, and the <code>CountryLanguage</code> table, and all our queries assume there will be a row in the <code>City</code> and <code>CountryLanguage</code> matching every value in the <code>Country</code>.</p>
+<p>What is going to happen? Our <code>City</code> table would still contain a number of New Zealand cities and <code>CountryLanguage</code> table also have a few records related to New Zealand. This shouldn’t happen because <code>Country.code</code> is a foreign key into the <code>City</code> table, and the <code>CountryLanguage</code> table, and all our queries assume there will be a row in the <code>City</code> and <code>CountryLanguage</code> matching every value in the <code>Country</code>.</p>
 <p>This problem is called <a href="reference.html#referential-integrity">referential integrity</a>: we need to ensure that all references between tables can always be resolved correctly. One way to do this is to delete all the records that use <code>'NZL'</code> as a foreign key before deleting the record that uses it as a primary key. If our database manager supports it, we can automate this using <a href="reference.html#cascading-delete">cascading delete</a>. However, this technique is outside the scope of this chapter.</p>
 <!---
 We can also insert values into one table directly from another:
@@ -251,35 +251,28 @@ INSERT INTO JustLatLong SELECT lat, long FROM Site;
 ~~~
 --->
 <blockquote>
-<h2>Hybrid Storage Models</h2>
+<h3>Hybrid Storage Models</h3>
 <p>Many applications use a hybrid storage model instead of putting everything into a database: the actual data (such as astronomical images) is stored in files, while the database stores the files’ names, their modification dates, the region of the sky they cover, their spectral characteristics, and so on. This is also how most music player software is built: the database inside the application keeps track of the MP3 files, but the files themselves live on disk.</p>
 </blockquote>
 <blockquote>
-<h2>Replacing NULL</h2>
+<h3>Replacing NULL</h3>
 <p>Write an SQL statement to replace all uses of <code>null</code> in <code>Country.headofstate</code> with the string <code>'unknown'</code>.</p>
 </blockquote>
 <blockquote>
-<h2>Importing CSV</h2>
-</blockquote>
-<blockquote>
-<p>If you have <a href="reference.html#comma-separated-values">CSV</a> files, you can import the data using SQLite’s CSV import feature First, you need to create the table. You can enter the SQL commands for creating tables. Alternativey, you can execute <code>create_tables.sql</code> (which already contains the SQL commands) by:</p>
-</blockquote>
+<h3>Importing CSV</h3>
+<p>If you have <a href="reference.html#comma-separated-values">CSV</a> files, you can import the data using SQLite’s CSV import feature.</p>
+<p>First, you need to create the table. You can enter the SQL commands for creating tables. Alternatively, you can execute <code>create_tables.sql</code> (which already contains the SQL commands) by:</p>
 <pre class="sql"><code>.read create_tables.sql</code></pre>
-<blockquote>
-<p>Secondly, you need to set the mode to load CSV</p>
-</blockquote>
+<p>Secondly, you need to set the mode to load CSV format correctly.</p>
 <pre class="sql"><code>.mode csv</code></pre>
-<blockquote>
 <p>Finally, import each CSV file into table.</p>
-</blockquote>
 <pre class="sql"><code>.import country.csv Country
 .import city.csv City
 .import countrylanguage.csv CountryLanguage</code></pre>
-<blockquote>
 <p>Note: Importing from CSV might have an issue in handling NULL values because an empty (ie. NULL) value in CSV is an empty string (ie. “”), which might not be exactly what you expect.</p>
 </blockquote>
 <blockquote>
-<h2>Backing Up with SQL</h2>
+<h3>Backing Up with SQL</h3>
 <p>SQLite has several administrative commands that aren’t part of the SQL standard. One of them is <code>.dump</code>, which prints the SQL commands needed to re-create the database. Another is <code>.read</code>, which reads a file created by <code>.dump</code> and restores the database. A colleague of yours thinks that storing dump files (which are text) in version control is a good way to track and manage changes to the database. What are the pros and cons of this approach? (Hint: records aren’t stored in any particular order.)</p>
 </blockquote>
 

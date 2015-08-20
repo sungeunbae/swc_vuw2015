@@ -259,7 +259,7 @@ img {
 </tr>
 </tbody>
 </table>
-<p>This doesn’t really make sense - total population and average life expenctancy are for all countries in Polynesia, not Samoa alone - Then why does Samoa appear?</p>
+<p>This doesn’t really make sense - total population and average life expectancy are for all countries in Polynesia, not Samoa alone - Then why does Samoa appear?</p>
 <p>The answer is that when it has to aggregate a field, but isn’t told how to, the database manager chooses a random value from the input set.</p>
 <p>Another important fact is that when there are no values to aggregate — for example, where there are no rows satisfying the <code>WHERE</code> clause — aggregation’s result is “don’t know” rather than zero or some other arbitrary value:</p>
 <pre class="sql"><code>SELECT name, sum(population) AS total_population,avg(lifeexpectancy) AS avg_life
@@ -281,7 +281,7 @@ FROM Country WHERE region=&quot;Polynesia&quot; AND lifeexpectancy IS NULL;</cod
 </tbody>
 </table>
 <p>Here, average life expectancy is all NULL because there was no values to aggregate.</p>
-<p>Now, let’s try something more meaningful. We wish to know the number of countries and the average life expenctancy in different continents.</p>
+<p>Now, let’s try something more meaningful. We wish to know the number of countries and the average life expectancy in different continents.</p>
 <blockquote>
 <h2>Find all regions</h2>
 <p>Write a query that produce a list of all continents.</p>
@@ -726,24 +726,74 @@ ORDER BY continent,region;</code></pre>
 <li><p>counted the number of records in each subset, calculated the average <code>lifeexpectancy</code> in each, and chose a <code>continent</code> and <code>region</code> value from each (it doesn’t matter which ones, since they’re all equal).</p></li>
 </ol>
 <blockquote>
-<h2>Counting countries represented by the Queen</h2>
+<h3>Counting countries represented by the Queen</h3>
 <p>How many countries have “Elizabeth II” as the head of state and what is their average life expectancy?</p>
 </blockquote>
 <blockquote>
-<h2>Averaging with NULL</h2>
+<h3>Averaging with NULL</h3>
 <p>The average of a set of values is the sum of the values divided by the number of values. Does this mean that the <code>avg</code> function returns 2.0 or 3.0 when given the values 1.0, <code>null</code>, and 5.0?</p>
 </blockquote>
 <blockquote>
-<h2>What Does This Query Do?</h2>
-<p>We worked out the average life expectancy of British commonwealth country (represented by the Queen). We want to calculate the difference between the life expectancy of each individual commonweath nation and the average of all commonwealth nations. We write the query:</p>
+<h3>What Does This Query Do?</h3>
+<p>We worked out the average life expectancy of countries represented by the Queen. We want to calculate the difference between the life expectancy of each of those nations and the average value. We write the query:</p>
 <pre class="sql"><code>SELECT lifeexpectancy-avg(lifeexpectancy)  FROM Country WHERE headofstate=&quot;Elizabeth II&quot;;</code></pre>
 <p>What does this actually produce, and why?</p>
 </blockquote>
 <blockquote>
-<h2>Ordering When Concatenating</h2>
-<p>The function <code>group_concat(field, separator)</code> concatenates all the values in a field using the specified separator character (or ‘,’ if the separator isn’t specified). Use this to produce a one-line list of continent’ names, such as:</p>
-<pre class="sql"><code>North America,Asia,Africa,Europe,South America,Oceania,Antarctica</code></pre>
+<h3>Ordering When Concatenating</h3>
+<p>The function <code>group_concat(field, separator)</code> concatenates all the values in a field using the specified separator character (or ‘,’ if the separator isn’t specified).</p>
 </blockquote>
+<blockquote>
+<pre class="sql"><code>SELECT DISTINCT continent FROM Country;</code></pre>
+</blockquote>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Continent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">North America</td>
+</tr>
+<tr class="even">
+<td align="left">Asia</td>
+</tr>
+<tr class="odd">
+<td align="left">Africa</td>
+</tr>
+<tr class="even">
+<td align="left">Europe</td>
+</tr>
+<tr class="odd">
+<td align="left">South America</td>
+</tr>
+<tr class="even">
+<td align="left">Oceania</td>
+</tr>
+<tr class="odd">
+<td align="left">Antarctica</td>
+</tr>
+</tbody>
+</table>
+<p>If we use <code>group_concat()</code> function on this result by <code>SELECT</code>ing <code>FROM</code> the output of this query,</p>
+<blockquote>
+<pre class="sql"><code>SELECT group_concat(continent, &quot;, &quot;) FROM (SELECT DISTINCT continent FROM Country);</code></pre>
+</blockquote>
+<p>We can get a one line list of continents.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">group_concat(continent, “,”)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">North America, Asia, Africa, Europe, South America, Oceania, Antarctica</td>
+</tr>
+</tbody>
+</table>
+<p>What should you do to get this list alphabetically sorted?</p>
 
 
 </div>

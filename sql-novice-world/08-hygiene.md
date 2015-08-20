@@ -54,7 +54,7 @@ The fourth rule is that the units for every value should be stored explicitly.
 Our database doesn't do this, and that's a problem:
 For example, `GNP` in `Country` table is given in unit of million dollars. New Zealand's GNP, 54669.0 must be interpreted as 54,669,000,000 dollars. However, it is not explicitly mandated and someone may enter a record in full amount instead of truncating six decimal places. We can guarantee the integrity of our data if this ever happens.
 
-> ## Identifying Atomic Values {.challenge}
+> ### Identifying Atomic Values {.challenge}
 >
 > Which of the following are atomic values? Which are not? Why?
 >
@@ -63,7 +63,7 @@ For example, `GNP` in `Country` table is given in unit of million dollars. New Z
 > *   January 25, 1971
 > *   the XY coordinate (0.5, 3.3)
 
-> ## Identifying a Primary Key {.challenge}
+> ### Identifying a Primary Key {.challenge}
 >
 > What is the primary key in this table?
 > I.e., what value or combination of values uniquely identifies a record?

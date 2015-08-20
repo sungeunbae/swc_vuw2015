@@ -117,7 +117,7 @@ get_country_name("world.db","AUS")
 We use string concatenation using `paste0(str1,str2,...)`on line 3 of this function
 to construct a query containing the country code.
 
-> ## Filling a Table vs. Printing Values {.challenge}
+> ### Filling a Table vs. Printing Values {.challenge}
 >
 > Write a R program that creates a new database in a file called
 > `original.db` containing a single table called `Pressure`, with a
@@ -126,7 +126,7 @@ to construct a query containing the country code.
 > How long does it take to run a program that simply writes those
 > random numbers to a file?
 
-> ## Filtering in SQL vs. Filtering in R {.challenge}
+> ### Filtering in SQL vs. Filtering in R {.challenge}
 >
 > Write a R program that creates a new database called
 > `backup.db` with the same structure as `original.db` and copies all

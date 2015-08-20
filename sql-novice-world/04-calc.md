@@ -54,7 +54,7 @@ New Zealand           54669.0               3862000     14155.6188503366
 United States         8510700.0             278357000   30574.7654989815   
 
 When we run the query,
-the expression `gnp/populatioon*1000000` is evaluated for each row.
+the expression `gnp/population*1000000` is evaluated for each row.
 Expressions can use any of the fields, all of usual arithmetic operators,and a variety of common functions.
 (Exactly which ones depends on which database manager is being used.)
 For example,we can round to two decimal places
@@ -112,12 +112,12 @@ North Korea,Asia                          24039000
 
 
 
-> ## Converting to New Zealand dollar {.challenge}
+> ### Converting to New Zealand dollar {.challenge}
 >
 > GNP per capita we computed was in US dollar. In November 2000, about the time this data was compiled, NZD/USD exchange rate dropped to historic low 0.39. 
 > Modify the query for GNP per capita to output the amount in NZD using this exchange rate.
 
-> ## Unions {.challenge}
+> ### Unions {.challenge}
 >
 > The `UNION` operator combines the results of two queries:
 >
