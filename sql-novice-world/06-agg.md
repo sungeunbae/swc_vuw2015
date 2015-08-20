@@ -339,9 +339,9 @@ this query:
     (it doesn't matter which ones,
     since they're all equal).
 
-> ## Counting British Commonwealth countries {.challenge}
+> ## Counting countries represented by the Queen {.challenge}
 >
-> How many countries have "Elisabeth II" as the head of state and what is their average life expectancy?
+> How many countries have "Elizabeth II" as the head of state and what is their average life expectancy?
 
 > ## Averaging with NULL {.challenge}
 >
@@ -357,7 +357,7 @@ this query:
 > We write the query:
 >
 > ~~~ {.sql}
-> SELECT lifeexpectancy-avg(lifeexpectancy)  FROM Country WHERE headofstate="Elisabeth II";
+> SELECT lifeexpectancy-avg(lifeexpectancy)  FROM Country WHERE headofstate="Elizabeth II";
 > ~~~
 >
 > What does this actually produce, and why?

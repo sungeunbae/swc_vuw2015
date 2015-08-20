@@ -726,8 +726,8 @@ ORDER BY continent,region;</code></pre>
 <li><p>counted the number of records in each subset, calculated the average <code>lifeexpectancy</code> in each, and chose a <code>continent</code> and <code>region</code> value from each (it doesn’t matter which ones, since they’re all equal).</p></li>
 </ol>
 <blockquote>
-<h2>Counting British Commonwealth countries</h2>
-<p>How many countries have “Elisabeth II” as the head of state and what is their average life expectancy?</p>
+<h2>Counting countries represented by the Queen</h2>
+<p>How many countries have “Elizabeth II” as the head of state and what is their average life expectancy?</p>
 </blockquote>
 <blockquote>
 <h2>Averaging with NULL</h2>
@@ -736,7 +736,7 @@ ORDER BY continent,region;</code></pre>
 <blockquote>
 <h2>What Does This Query Do?</h2>
 <p>We worked out the average life expectancy of British commonwealth country (represented by the Queen). We want to calculate the difference between the life expectancy of each individual commonweath nation and the average of all commonwealth nations. We write the query:</p>
-<pre class="sql"><code>SELECT lifeexpectancy-avg(lifeexpectancy)  FROM Country WHERE headofstate=&quot;Elisabeth II&quot;;</code></pre>
+<pre class="sql"><code>SELECT lifeexpectancy-avg(lifeexpectancy)  FROM Country WHERE headofstate=&quot;Elizabeth II&quot;;</code></pre>
 <p>What does this actually produce, and why?</p>
 </blockquote>
 <blockquote>

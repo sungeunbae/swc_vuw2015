@@ -205,7 +205,7 @@ INSERT INTO "Country" VALUES('SJM','Svalbard and Jan Mayen','Europe','Nordic Cou
 INSERT INTO "Country" VALUES('SLB','Solomon Islands','Oceania','Melanesia',444000,71.3,182.0,'Constitutional Monarchy','Elizabeth II');
 INSERT INTO "Country" VALUES('SLE','Sierra Leone','Africa','Western Africa',4854000,45.3,746.0,'Republic','Ahmed Tejan Kabbah');
 INSERT INTO "Country" VALUES('SLV','El Salvador','North America','Central America',6276000,69.7,11863.0,'Republic','Francisco Guillermo Flores Pérez');
-INSERT INTO "Country" VALUES('SMR','San Marino','Europe','Southern Europe',27000,81.1,510.0,'Republic','Giovanni Lonfernini/Valeria Ciavatta');
+INSERT INTO "Country" VALUES('SMR','San Marino','Europe','Southern Europe',27000,81.1,510.0,'Republic',NULL);
 INSERT INTO "Country" VALUES('SOM','Somalia','Africa','Eastern Africa',10097000,46.2,935.0,'Republic','Abdiqassim Salad Hassan');
 INSERT INTO "Country" VALUES('SPM','Saint Pierre and Miquelon','North America','North America',7000,77.6,0.0,'Territorial Collectivity of France','Jacques Chirac');
 INSERT INTO "Country" VALUES('STP','Sao Tome and Principe','Africa','Central Africa',147000,65.3,6.0,'Republic','Miguel Trovoada');

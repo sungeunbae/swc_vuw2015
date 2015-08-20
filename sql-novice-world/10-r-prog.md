@@ -22,10 +22,14 @@ Here's a short R program that selects data from an SQLite database stored in a f
 ~~~ {.r}
 library(RSQLite)
 db<-dbConnect(SQLite(),dbname="world.db")
-query = "SELECT * FROM Country WHERE region='Australia and New Zealand';"
-dbGetQuery(conn=db, query)
+query <- "SELECT * FROM Country WHERE region='Australia and New Zealand';"
+raw_results<-dbSendQuery(conn=db, query)
+results<- fetch(raw_results)
+dbClearResult(raw_results)
+print(results)
 dbDisconnect(db)
 ~~~
+
 ~~~ {.output}
   Code                    Name Continent                    Region Population LifeExpectancy    GNP                      GovernmentForm
 1  AUS               Australia   Oceania Australia and New Zealand   18886000           79.8 351182 Constitutional Monarchy, Federation
@@ -49,17 +53,13 @@ if we switch from one database to another.
 Line 2 establishes a connection to the database. 
 Since we're using SQLite, all we need to specify is the name of the database file.
 Other systems may require us to provide a username and password as well.
-On line 4, we use that connection to ask the database to execute a query for us.
-The query is written in SQL,
-and passed to `dbGetQuery` as a string.
+On line 3, we create a SQL query, and passed to `dbSendQuery` as a string on line 4.
 It's our job to make sure that SQL is properly formatted;
-if it isn't,
-or if something goes wrong when it is being executed,
+if it isn't, or if something goes wrong when it is being executed,
 the database will report an error.
-
-The function `dbGetQuery` executes the command and displays the output.
-
-Finally, lines 5 closes our connection,
+`dbSendQuery` executes a query for us, and returns a SQLiteResult object. We extract readable output from it by `fetch()` on line 5.
+`dbClearResult` frees all resources associated with `results`. 
+Finally, lines 7 closes our connection,
 since the database can only keep a limited number of these open at one time.
 Since establishing a connection takes time,
 though,
@@ -70,36 +70,51 @@ only to reopen it a few microseconds later to do another operation.
 Instead,
 it's normal to create one connection that stays open for the lifetime of the program.
 
+Instead of using `dbSendQuery()` followed by `fetch()` and `dbClearResult()`, we can use
+`dbGetQuery`, such as:
+
+~~~ {.r}
+library(RSQLite)
+db<-dbConnect(SQLite(),dbname="world.db")
+query <- "SELECT * FROM Country WHERE region='Australia and New Zealand';"
+results<-dbGetQuery(conn=db, query)
+print(results)
+dbDisconnect(db)
+~~~
+
+
+
 Queries in real applications will often depend on values provided by users.
 For example,
 this function takes a country code as a parameter and returns the country name:
 
-~~~ {.python}
-import sqlite3
-def get_country_name(database_file, country_code):
-    query = "SELECT name FROM Country WHERE code='" + country_code + "';"
-    connection = sqlite3.connect(database_file)
-    print "Query:"+query
-    cursor = connection.cursor()
-    cursor.execute(query)
-    results = cursor.fetchall()
-    cursor.close()
-    connection.close()
-    print "Country Code '"+country_code+"' is for "+results[0][0]
+~~~ {.r}
+get_country_name <- function(database_file, country_code) {
+  require(RSQLite)
+  db<-dbConnect(SQLite(),dbname=database_file)
+  query <-  paste0("SELECT name FROM Country WHERE code='",country_code,"';")
+  print(paste0("Query:",query))
+  results<-dbGetQuery(conn=db, query)
+  print(paste0("Country Code '",country_code,"' is for ",results))
+  dbDisconnect(db)
+}
 
 get_country_name('world.db', 'NZL')
-get_country_name('world.db', 'AUS')
+get_country_name("world.db","AUS")
 ~~~
 
 ~~~ {.output}
-Query:SELECT name FROM Country WHERE code='NZL';
-Country Code 'NZL' is for New Zealand
-
-Query:SELECT name FROM Country WHERE code='AUS';
-Country Code 'AUS' is for Australia
+> get_country_name('world.db', 'NZL')
+[1] "Query:SELECT name FROM Country WHERE code='NZL';"
+[1] "Country Code 'NZL' is for New Zealand"
+[1] TRUE
+> get_country_name("world.db","AUS")
+[1] "Query:SELECT name FROM Country WHERE code='AUS';"
+[1] "Country Code 'AUS' is for Australia"
+[1] TRUE
 ~~~
 
-We use string concatenation on the first line of this function
+We use string concatenation using `paste0(str1,str2,...)`on line 3 of this function
 to construct a query containing the country code.
 
 > ## Filling a Table vs. Printing Values {.challenge}

@@ -61,104 +61,78 @@ img {
 
 <div id="header">
 <h1 class="title">Databases and SQL</h1>
-<h3 class="subtitle"><em>Data Hygiene</em></h3>
+<h3 class="subtitle"><em>R Programming with Databases</em></h3>
 </div>
 
 
 <blockquote>
 <h2>Learning Objectives</h2>
 <ul>
-<li>Explain what an atomic value is.</li>
-<li>Distinguish between atomic and non-atomic values.</li>
-<li>Explain why every value in a database should be atomic.</li>
-<li>Explain what a primary key is and why every record should have one.</li>
-<li>Identify primary keys in database tables.</li>
-<li>Explain why database entries should not contain redundant information.</li>
-<li>Identify redundant information in databases.</li>
+<li>Write short programs that execute SQL queries.</li>
+<li>Trace the execution of a program that contains an SQL query.</li>
+<li>Explain why most database applications are written in a general-purpose language rather than in SQL.</li>
 </ul>
 </blockquote>
-<p>Now that we have seen how joins work, we can see why the relational model is so useful and how best to use it.</p>
-<p>The first rule is that every value should be <a href="reference.html#atomic">atomic</a>, i.e., not contain parts that we might want to work with separately. For example, if we store a person’s name, we should store personal and family names in separate columns instead of putting the entire name in one column so that we don’t have to use substring operations to get the name’s components. More importantly, we store the two parts of the name separately because splitting on spaces is unreliable: just think of a name like “Eloise St. Cyr” or “Jan Mikkel Steubart”.</p>
-<p>The second rule is that every record should have a unique primary key. This can be a serial number that has no intrinsic meaning, one of the values in the record (like the <code>ID</code> field in the <code>City</code> table), or even a combination of values: the pair <code>(countrycode, language)</code> from the <code>CountryLanguage</code> table uniquely identifies every record.</p>
-<p>The third rule is that there should be no redundant information. For example, we could get rid of the <code>CountryLanguage</code> table and rewrite the <code>Country</code> table like this (showing only “New Zealand” here)</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">name</th>
-<th align="left">Continent</th>
-<th align="left">Region</th>
-<th align="left">Population</th>
-<th align="left">LifeExpect</th>
-<th align="left">GNP</th>
-<th align="left">GovernmentForm</th>
-<th align="left">HeadOfState</th>
-<th align="left">Language</th>
-<th align="left">IsOfficial</th>
-<th align="left">Percentage</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">NZL</td>
-<td align="left">Oceania</td>
-<td align="left">Australia and New Zealand</td>
-<td align="left">3862000</td>
-<td align="left">77.8</td>
-<td align="left">54669.0</td>
-<td align="left">Constitutional Monarchy</td>
-<td align="left">Elizabeth II</td>
-<td align="left">English</td>
-<td align="left">T</td>
-<td align="left">87.0</td>
-</tr>
-<tr class="even">
-<td align="left">NZL</td>
-<td align="left">Oceania</td>
-<td align="left">Australia and New Zealand</td>
-<td align="left">3862000</td>
-<td align="left">77.8</td>
-<td align="left">54669.0</td>
-<td align="left">Constitutional Monarchy</td>
-<td align="left">Elizabeth II</td>
-<td align="left">Maori</td>
-<td align="left">F</td>
-<td align="left">4.3</td>
-</tr>
-</tbody>
-</table>
-<p>In fact, we could use a single table that recorded all the information about each reading in each row, just as a spreadsheet would. The problem is that it’s very hard to keep data organized this way consistent: if we realize that the date of a particular visit to a particular site is wrong, we have to change multiple records in the database. What’s worse, we may have to guess which records to change, since other sites may also have been visited on that date.</p>
-<p>The fourth rule is that the units for every value should be stored explicitly. Our database doesn’t do this, and that’s a problem: For example, <code>GNP</code> in <code>Country</code> table is given in unit of million dollars. New Zealand’s GNP, 54669.0 must be interpreted as 54,669,000,000 dollars. However, it is not explicitly mandated and someone may enter a record in full amount instead of truncating six decimal places. We can guarantee the integrity of our data if this ever happens.</p>
+<p>To close, let’s have a look at how to access a database from a general-purpose programming language like R. Other languages use almost exactly the same model: library and function names may differ, but the concepts are the same.</p>
+<p>Here’s a short R program that selects data from an SQLite database stored in a file called <code>world.db</code>:</p>
+<pre class="r"><code>library(RSQLite)
+db&lt;-dbConnect(SQLite(),dbname=&quot;world.db&quot;)
+query &lt;- &quot;SELECT * FROM Country WHERE region='Australia and New Zealand';&quot;
+raw_results&lt;-dbSendQuery(conn=db, query)
+results&lt;- fetch(raw_results)
+dbClearResult(raw_results)
+print(results)
+dbDisconnect(db)</code></pre>
+<pre class="output"><code>  Code                    Name Continent                    Region Population LifeExpectancy    GNP                      GovernmentForm
+1  AUS               Australia   Oceania Australia and New Zealand   18886000           79.8 351182 Constitutional Monarchy, Federation
+2  CCK Cocos (Keeling) Islands   Oceania Australia and New Zealand        600             NA      0              Territory of Australia
+3  CXR        Christmas Island   Oceania Australia and New Zealand       2500             NA      0              Territory of Australia
+4  NFK          Norfolk Island   Oceania Australia and New Zealand       2000             NA      0              Territory of Australia
+5  NZL             New Zealand   Oceania Australia and New Zealand    3862000           77.8  54669             Constitutional Monarchy
+   HeadOfState
+1 Elizabeth II
+2 Elizabeth II
+3 Elizabeth II
+4 Elizabeth II
+5 Elizabeth II</code></pre>
+<p>The program starts by importing the <code>RSQLite</code> library. If we were connecting to MySQL, DB2, or some other database, we would import a different library, but all of them provide the same functions,so that the rest of our program does not have to change (at least, not much) if we switch from one database to another.</p>
+<p>Line 2 establishes a connection to the database. Since we’re using SQLite, all we need to specify is the name of the database file. Other systems may require us to provide a username and password as well. On line 3, we create a SQL query, and passed to <code>dbSendQuery</code> as a string on line 4. It’s our job to make sure that SQL is properly formatted; if it isn’t, or if something goes wrong when it is being executed, the database will report an error. <code>dbSendQuery</code> executes a query for us, and returns a SQLiteResult object. We extract readable output from it by <code>fetch()</code> on line 5. <code>dbClearResult</code> frees all resources associated with <code>results</code>. Finally, lines 7 closes our connection, since the database can only keep a limited number of these open at one time. Since establishing a connection takes time, though, we shouldn’t open a connection, do one operation, then close the connection, only to reopen it a few microseconds later to do another operation. Instead, it’s normal to create one connection that stays open for the lifetime of the program.</p>
+<p>Instead of using <code>dbSendQuery()</code> followed by <code>fetch()</code> and <code>dbClearResult()</code>, we can use <code>dbGetQuery</code>, such as:</p>
+<pre class="r"><code>library(RSQLite)
+db&lt;-dbConnect(SQLite(),dbname=&quot;world.db&quot;)
+query &lt;- &quot;SELECT * FROM Country WHERE region='Australia and New Zealand';&quot;
+results&lt;-dbGetQuery(conn=db, query)
+print(results)
+dbDisconnect(db)</code></pre>
+<p>Queries in real applications will often depend on values provided by users. For example, this function takes a country code as a parameter and returns the country name:</p>
+<pre class="r"><code>get_country_name &lt;- function(database_file, country_code) {
+  require(RSQLite)
+  db&lt;-dbConnect(SQLite(),dbname=database_file)
+  query &lt;-  paste0(&quot;SELECT name FROM Country WHERE code='&quot;,country_code,&quot;';&quot;)
+  print(paste0(&quot;Query:&quot;,query))
+  results&lt;-dbGetQuery(conn=db, query)
+  print(paste0(&quot;Country Code '&quot;,country_code,&quot;' is for &quot;,results))
+  dbDisconnect(db)
+}
+
+get_country_name('world.db', 'NZL')
+get_country_name(&quot;world.db&quot;,&quot;AUS&quot;)</code></pre>
+<pre class="output"><code>&gt; get_country_name('world.db', 'NZL')
+[1] &quot;Query:SELECT name FROM Country WHERE code='NZL';&quot;
+[1] &quot;Country Code 'NZL' is for New Zealand&quot;
+[1] TRUE
+&gt; get_country_name(&quot;world.db&quot;,&quot;AUS&quot;)
+[1] &quot;Query:SELECT name FROM Country WHERE code='AUS';&quot;
+[1] &quot;Country Code 'AUS' is for Australia&quot;
+[1] TRUE</code></pre>
+<p>We use string concatenation using <code>paste0(str1,str2,...)</code>on line 3 of this function to construct a query containing the country code.</p>
 <blockquote>
-<h2>Identifying Atomic Values</h2>
-<p>Which of the following are atomic values? Which are not? Why?</p>
-<ul>
-<li>New Zealand</li>
-<li>87 Turing Avenue</li>
-<li>January 25, 1971</li>
-<li>the XY coordinate (0.5, 3.3)</li>
-</ul>
+<h2>Filling a Table vs. Printing Values</h2>
+<p>Write a R program that creates a new database in a file called <code>original.db</code> containing a single table called <code>Pressure</code>, with a single field called <code>reading</code>, and inserts 100,000 random numbers between 10.0 and 25.0. How long does it take this program to run? How long does it take to run a program that simply writes those random numbers to a file?</p>
 </blockquote>
 <blockquote>
-<h2>Identifying a Primary Key</h2>
-<p>What is the primary key in this table? I.e., what value or combination of values uniquely identifies a record?</p>
-<table>
-<thead>
-<tr class="header">
-<th align="left">latitude</th>
-<th align="left">longitude</th>
-<th align="left">date</th>
-<th align="left">temperature</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">57.3</td>
-<td align="left">-22.5</td>
-<td align="left">2015-01-09</td>
-<td align="left">-14.2</td>
-</tr>
-</tbody>
-</table>
+<h2>Filtering in SQL vs. Filtering in R</h2>
+<p>Write a R program that creates a new database called <code>backup.db</code> with the same structure as <code>original.db</code> and copies all the values greater than 20.0 from <code>original.db</code> to <code>backup.db</code>. Which is faster: filtering values in the query, or reading everything into memory and filtering in R?</p>
 </blockquote>
 
 
