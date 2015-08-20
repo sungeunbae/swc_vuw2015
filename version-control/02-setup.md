@@ -11,15 +11,13 @@ minutes: 5
 
 When we use Git on a new computer for the first time,
 we need to configure a few things.
-Here's how Dracula sets up his new laptop:
+Here's how I've set up my new laptop:
 
 ~~~ {.bash}
-$ git config --global user.name "Vlad Dracula"
-$ git config --global user.email "vlad@tran.sylvan.ia"
+$ git config --global user.name "Tim McNamara"
+$ git config --global user.email "tim@dotlovesdata.com"
 $ git config --global color.ui "auto"
 ~~~
-
-(Please use your own name and email address instead of Dracula's.)
 
 He also has to set his favorite text editor, following this table:
 
