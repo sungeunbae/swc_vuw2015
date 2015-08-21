@@ -1,5 +1,5 @@
 ---
-title: "SWC Victoria - Programming with R"
+title: "SWC Victoria University - Programming with R"
 output:
   html_document:
     toc: yes
