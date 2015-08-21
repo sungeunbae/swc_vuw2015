@@ -66,7 +66,7 @@ Lower Hutt            98100
 
 We can use many other Boolean operators to filter our data.
 For example,
-we can ask for all information from the DR-1 site collected before 1930:
+we can ask for NZ cities with population over 200,000:
 
 ~~~ {.sql}
 SELECT name,population FROM City WHERE countrycode="NZL" and population > 200000;
