@@ -214,7 +214,10 @@ INSERT INTO JustLatLong SELECT lat, long FROM Site;
 >~~~{.sql}
 >.read create_tables.sql
 >~~~
-> Secondly, you need to set the mode to load CSV format correctly.
+> Secondly, as we have created the table structure, the heading in csv file (first row) can be now removed. Delete
+> the first line, and leave the data only.
+>
+> Thirdly, you need to set the mode to load CSV format correctly.
 >
 >~~~{.sql}
 >.mode csv
@@ -229,7 +232,8 @@ INSERT INTO JustLatLong SELECT lat, long FROM Site;
 >~~~
 >
 > Note: Importing from CSV might have an issue in handling NULL values because an empty (ie. NULL) value in CSV is an empty string (ie. ""), 
-> which might not be exactly what you expect.
+> which might not be exactly what you expect. If we used [sentinel value](reference.html#sentinel-value))
+> by marking missing data rather than `null`, such a problem can be avoided.
 
 > ### Backing Up with SQL {.challenge}
 >
