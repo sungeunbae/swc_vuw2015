@@ -45,7 +45,7 @@ we can filter records using `WHERE`
 based on values in columns that aren't then displayed:
 
 ~~~ {.sql}
-SELECT name,population FROM City WHERE CountryCode="NZL";
+SELECT name,population FROM City WHERE countrycode="NZL";
 ~~~
 
 Name                  Population 
