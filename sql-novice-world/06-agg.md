@@ -167,11 +167,24 @@ Here, average life expectancy is all NULL because there was no values to aggrega
 
 Now, let's try something more meaningful. We wish to know the number of countries and the average life expectancy in different continents.
 
-> ## Find all regions {.challenge}
+> ### Find all continents {.challenge}
 > Write a query that produce a list of all continents.
 
 
-To obtain the average life expectancy for each continent, let's try the following.
+## Find average life expectancy in each continent {.challenge}
+First of all, let's try the following.
+
+~~~{.sql}
+SELECT count(name) AS num_countries, round(avg(lifeexpectancy),2) AS avg_life FROM Country;
+~~~
+
+num_countries         avg_life     
+--------------------  -------------
+239                   66.49  
+~~~
+
+ There are 239 countries, and global average life expectancy is 66.49.
+ We want to obtain the average life expectancy for each continent. Will this do the job?
 
 ~~~{.sql}
 SELECT continent, count(name) AS num_countries, round(avg(lifeexpectancy),2) AS avg_life 
@@ -182,9 +195,8 @@ Continent             num_countries  avg_life
 --------------------  -------------  ----------
 Africa                239            66.49     
 
-
-This is not what we want. The query actually worked out the number of countries and the average life expectancy of all countries, 
-then selected a single arbitrary continent name "Africa".
+This is not what we want. The query actually worked out exactly same values then selected a single arbitrary continent name 
+"Africa".
 
 Since there are 7 continents, we could write 7 queries of the form:
 
@@ -339,16 +351,54 @@ this query:
     (it doesn't matter which ones,
     since they're all equal).
 
-> ### Counting countries represented by the Queen {.challenge}
+> ### Counting Major cities in Australia and New Zealand
+> The following query produces a list of major cities (population > 200,000) in Australia and New Zealand
 >
-> How many countries have "Elizabeth II" as the head of state and what is their average life expectancy?
+>~~~{.sql}
+>SELECT name,population,countrycode FROM City WHERE countrycode IN ("NZL","AUS") AND population > 200000;
+>~~~
+
+Name                  Population     CountryCod
+--------------------  -------------  ----------
+Sydney                3276207        AUS       
+Melbourne             2865329        AUS       
+Brisbane              1291117        AUS       
+Perth                 1096829        AUS       
+Adelaide              978100         AUS       
+Canberra              322723         AUS       
+Gold Coast            311932         AUS       
+Newcastle             270324         AUS       
+Central Coast         227657         AUS       
+Wollongong            219761         AUS       
+Auckland              381800         NZL       
+Christchurch          324200         NZL       
+Manukau               281800         NZL    
+
+> Which query gives the number of major cities are in Australia and New Zealand? ie. We want the output like:
+
+CountryCode           count(*)     
+--------------------  -------------
+AUS                   10           
+NZL                   3        
+
+> 1. SELECT countrycode,sum(*) FROM City WHERE countrycode in ("NZL","AUS") AND population > 200000;
+> 2. SELECT countrycode,count(name) FROM City WHERE countrycode in ("NZL","AUS") AND population > 200000;
+> 3. SELECT countrycode,count(name) FROM City WHERE countrycode in ("NZL","AUS") AND population > 200000 GROUP BY countrycode;
+> 4. SELECT countrycode,count(*) FROM City WHERE countrycode in ("NZL","AUS") AND population > 200000 GROUP BY countrycode;
 
 > ### Averaging with NULL {.challenge}
 >
 > The average of a set of values is the sum of the values
 > divided by the number of values.
-> Does this mean that the `avg` function returns 2.0 or 3.0
-> when given the values 1.0, `null`, and 5.0?
+> what does the `avg` function return when given the values 1.0, `null`, and 5.0?
+>
+> 1. 2.0 
+> 2. 3.0
+
+
+> ### Counting countries represented by the Queen {.challenge}
+>
+> How many countries have "Elizabeth II" as the head of state and what is their average life expectancy?
 
 > ### What Does This Query Do? {.challenge}
 >

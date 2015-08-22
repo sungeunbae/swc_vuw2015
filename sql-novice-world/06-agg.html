@@ -283,10 +283,32 @@ FROM Country WHERE region=&quot;Polynesia&quot; AND lifeexpectancy IS NULL;</cod
 <p>Here, average life expectancy is all NULL because there was no values to aggregate.</p>
 <p>Now, let’s try something more meaningful. We wish to know the number of countries and the average life expectancy in different continents.</p>
 <blockquote>
-<h2>Find all regions</h2>
+<h3>Find all continents</h3>
 <p>Write a query that produce a list of all continents.</p>
 </blockquote>
-<p>To obtain the average life expectancy for each continent, let’s try the following.</p>
+<div id="find-average-life-expectancy-in-each-continent" class="section level2 challenge">
+<h2>Find average life expectancy in each continent</h2>
+<p>First of all, let’s try the following.</p>
+<pre class="sql"><code>SELECT count(name) AS num_countries, round(avg(lifeexpectancy),2) AS avg_life FROM Country;</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">num_countries</th>
+<th align="left">avg_life</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">239</td>
+<td align="left">66.49</td>
+</tr>
+<tr class="even">
+<td align="left"><sub>~</sub></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<p>There are 239 countries, and global average life expectancy is 66.49. We want to obtain the average life expectancy for each continent. Will this do the job?</p>
 <pre class="sql"><code>SELECT continent, count(name) AS num_countries, round(avg(lifeexpectancy),2) AS avg_life 
 FROM Country;</code></pre>
 <table>
@@ -305,7 +327,7 @@ FROM Country;</code></pre>
 </tr>
 </tbody>
 </table>
-<p>This is not what we want. The query actually worked out the number of countries and the average life expectancy of all countries, then selected a single arbitrary continent name “Africa”.</p>
+<p>This is not what we want. The query actually worked out exactly same values then selected a single arbitrary continent name “Africa”.</p>
 <p>Since there are 7 continents, we could write 7 queries of the form:</p>
 <pre class="sql"><code>SELECT continent, count(name) AS num_countries, round(avg(lifeexpectancy),2) AS avg_life 
 FROM Country WHERE continent=&quot;North America&quot;;</code></pre>
@@ -726,12 +748,126 @@ ORDER BY continent,region;</code></pre>
 <li><p>counted the number of records in each subset, calculated the average <code>lifeexpectancy</code> in each, and chose a <code>continent</code> and <code>region</code> value from each (it doesn’t matter which ones, since they’re all equal).</p></li>
 </ol>
 <blockquote>
-<h3>Counting countries represented by the Queen</h3>
-<p>How many countries have “Elizabeth II” as the head of state and what is their average life expectancy?</p>
+<h3>Counting Major cities in Australia and New Zealand</h3>
+<p>The following query produces a list of major cities (population &gt; 200,000) in Australia and New Zealand</p>
+<pre class="sql"><code>SELECT name,population,countrycode FROM City WHERE countrycode IN (&quot;NZL&quot;,&quot;AUS&quot;) AND population &gt; 200000;</code></pre>
+</blockquote>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Name</th>
+<th align="left">Population</th>
+<th align="left">CountryCod</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Sydney</td>
+<td align="left">3276207</td>
+<td align="left">AUS</td>
+</tr>
+<tr class="even">
+<td align="left">Melbourne</td>
+<td align="left">2865329</td>
+<td align="left">AUS</td>
+</tr>
+<tr class="odd">
+<td align="left">Brisbane</td>
+<td align="left">1291117</td>
+<td align="left">AUS</td>
+</tr>
+<tr class="even">
+<td align="left">Perth</td>
+<td align="left">1096829</td>
+<td align="left">AUS</td>
+</tr>
+<tr class="odd">
+<td align="left">Adelaide</td>
+<td align="left">978100</td>
+<td align="left">AUS</td>
+</tr>
+<tr class="even">
+<td align="left">Canberra</td>
+<td align="left">322723</td>
+<td align="left">AUS</td>
+</tr>
+<tr class="odd">
+<td align="left">Gold Coast</td>
+<td align="left">311932</td>
+<td align="left">AUS</td>
+</tr>
+<tr class="even">
+<td align="left">Newcastle</td>
+<td align="left">270324</td>
+<td align="left">AUS</td>
+</tr>
+<tr class="odd">
+<td align="left">Central Coast</td>
+<td align="left">227657</td>
+<td align="left">AUS</td>
+</tr>
+<tr class="even">
+<td align="left">Wollongong</td>
+<td align="left">219761</td>
+<td align="left">AUS</td>
+</tr>
+<tr class="odd">
+<td align="left">Auckland</td>
+<td align="left">381800</td>
+<td align="left">NZL</td>
+</tr>
+<tr class="even">
+<td align="left">Christchurch</td>
+<td align="left">324200</td>
+<td align="left">NZL</td>
+</tr>
+<tr class="odd">
+<td align="left">Manukau</td>
+<td align="left">281800</td>
+<td align="left">NZL</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Which query gives the number of major cities are in Australia and New Zealand? ie. We want the output like:</p>
+</blockquote>
+<table>
+<thead>
+<tr class="header">
+<th align="left">CountryCode</th>
+<th align="left">count(*)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">AUS</td>
+<td align="left">10</td>
+</tr>
+<tr class="even">
+<td align="left">NZL</td>
+<td align="left">3</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<ol style="list-style-type: decimal">
+<li>SELECT countrycode,sum(*) FROM City WHERE countrycode in (“NZL”,“AUS”) AND population &gt; 200000;</li>
+<li>SELECT countrycode,count(name) FROM City WHERE countrycode in (“NZL”,“AUS”) AND population &gt; 200000;</li>
+<li>SELECT countrycode,count(name) FROM City WHERE countrycode in (“NZL”,“AUS”) AND population &gt; 200000 GROUP BY countrycode;</li>
+<li>SELECT countrycode,count(*) FROM City WHERE countrycode in (“NZL”,“AUS”) AND population &gt; 200000 GROUP BY countrycode;</li>
+</ol>
 </blockquote>
 <blockquote>
 <h3>Averaging with NULL</h3>
-<p>The average of a set of values is the sum of the values divided by the number of values. Does this mean that the <code>avg</code> function returns 2.0 or 3.0 when given the values 1.0, <code>null</code>, and 5.0?</p>
+<p>The average of a set of values is the sum of the values divided by the number of values. what does the <code>avg</code> function return when given the values 1.0, <code>null</code>, and 5.0?</p>
+<ol style="list-style-type: decimal">
+<li>2.0</li>
+<li>3.0</li>
+</ol>
+</blockquote>
+<blockquote>
+<h3>Counting countries represented by the Queen</h3>
+<p>How many countries have “Elizabeth II” as the head of state and what is their average life expectancy?</p>
 </blockquote>
 <blockquote>
 <h3>What Does This Query Do?</h3>
@@ -794,6 +930,7 @@ ORDER BY continent,region;</code></pre>
 </tbody>
 </table>
 <p>What should you do to get this list alphabetically sorted?</p>
+</div>
 
 
 </div>

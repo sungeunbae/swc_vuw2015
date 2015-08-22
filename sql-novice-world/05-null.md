@@ -176,22 +176,35 @@ Bouvet Island                                       Harald V
 
 In contrast to arithmetic or Boolean operators, aggregation functions that combine multiple values, such as `min`, `max` or `avg`, *ignore* `null` values. In the majority of cases, this is a desirable output: for example, unknown values are thus not affecting our data when we are averaging it. Aggregation functions will be addressed in more detail in [the next section](06-agg.html).
 
+> ### NULL in a Set {.challenge}
+>
+> What do you expect the query:
+>
+> ~~~ {.sql}
+# > SELECT name, headofstate FROM Country WHERE region="Antarctica" AND headofstate IN ("Elizabeth II", NULL);
+> ~~~
+>
+> to produce?
+>
+> 1.
+>Name                                                HeadOfState      
+>--------------------------------------------------  -----------------
+>Heard Island and McDonald Islands                   Elizabeth II     
+>South Georgia and the South Sandwich Islands        Elizabeth II     
+>
+> 2.
+>Name                                                HeadOfState      
+>--------------------------------------------------  -----------------
+>Antarctica                                                           
+>Heard Island and McDonald Islands                   Elizabeth II     
+>South Georgia and the South Sandwich Islands        Elizabeth II   
+
 > ### Sorting by life expectancy {.challenge}
 >
 > Write a query that sorts the records of Polynesian countries (show name, population and life expectancy only) by life expectancy,
 > omitting entries for which the life expectancy is not known
 > (i.e., is null).
 
-> ### NULL in a Set {.challenge}
->
-> What do you expect the query:
->
-> ~~~ {.sql}
-> SELECT name, headofstate FROM Country WHERE region="Antarctica" AND headofstate IN ("Elizabeth II", NULL);
-> ~~~
->
-> to produce?
-> What does it actually produce?
 
 > ### Pros and Cons of Sentinels {.challenge}
 >

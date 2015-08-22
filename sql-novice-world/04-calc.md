@@ -170,3 +170,7 @@ Palau                                Micronesia
 Papua New Guinea                     Melanesia           
 Solomon Islands                      Melanesia           
 Vanuatu                              Melanesia    
+
+> From the solution query, remove "region" field (ie. only display "name") and run the query again. Then bring back "region" and remove "name", rerun the query. Does it behave as you expect?
+
+

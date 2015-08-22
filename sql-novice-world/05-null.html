@@ -360,8 +360,50 @@ img {
 <blockquote>
 <h3>NULL in a Set</h3>
 <p>What do you expect the query:</p>
-<pre class="sql"><code>SELECT name, headofstate FROM Country WHERE region=&quot;Antarctica&quot; AND headofstate IN (&quot;Elizabeth II&quot;, NULL);</code></pre>
-<p>to produce? What does it actually produce?</p>
+<pre class="sql"><code># &gt; SELECT name, headofstate FROM Country WHERE region=&quot;Antarctica&quot; AND headofstate IN (&quot;Elizabeth II&quot;, NULL);</code></pre>
+<p>to produce?</p>
+<ol style="list-style-type: decimal">
+<li><table>
+<thead>
+<tr class="header">
+<th align="left">Name</th>
+<th align="left">HeadOfState</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Heard Island and McDonald Islands</td>
+<td align="left">Elizabeth II</td>
+</tr>
+<tr class="even">
+<td align="left">South Georgia and the South Sandwich Islands</td>
+<td align="left">Elizabeth II</td>
+</tr>
+</tbody>
+</table></li>
+<li><table>
+<thead>
+<tr class="header">
+<th align="left">Name</th>
+<th align="left">HeadOfState</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Antarctica</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Heard Island and McDonald Islands</td>
+<td align="left">Elizabeth II</td>
+</tr>
+<tr class="odd">
+<td align="left">South Georgia and the South Sandwich Islands</td>
+<td align="left">Elizabeth II</td>
+</tr>
+</tbody>
+</table></li>
+</ol>
 </blockquote>
 <blockquote>
 <h3>Pros and Cons of Sentinels</h3>

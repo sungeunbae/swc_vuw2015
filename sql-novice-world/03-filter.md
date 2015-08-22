@@ -295,6 +295,15 @@ not to the entire rows as they are being processed.
 > or write a small program to generate ten thousand random (but plausible) records
 > and use that.
 
+
+> ### Top 10 economies in Asia and Oceania
+> Which of the following expression produces 10 largest economies in Asia and Oceana?
+>
+> 1. SELECT name, gnp FROM Country WHERE continent = 'Asia' AND continent = 'Oceania' LIMIT 10;
+> 2. SELECT name, gnp FROM Country WHERE continent = 'Asia' OR continent = 'Oceania' ORDER BY gnp ;
+> 3. SELECT name, gnp FROM Country WHERE continent IN ('Asia','Oceania') ORDER BY gnp LIMIT 10;
+> 4. SELECT name, gnp FROM Country WHERE continent = 'Asia' OR continent ='Oceania' ORDER BY gnp DESC LIMIT 10;
+
 > ### Fix This Query {.challenge}
 >
 > Suppose we want to select all countries whose population is between 3 million and 4 million.

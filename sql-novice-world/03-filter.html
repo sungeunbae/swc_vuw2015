@@ -889,6 +889,16 @@ img {
 <li><code>'alpha' LIKE 'a%p%'</code></li>
 </ul>
 </blockquote>
+<blockquote>
+<h3>Top 10 economies in Asia and Oceania</h3>
+<p>Which of the following expression produces 10 largest economies in Asia and Oceana?</p>
+<ol style="list-style-type: decimal">
+<li>SELECT name, gnp FROM Country WHERE continent = ‘Asia’ AND continent = ‘Oceania’ LIMIT 10;</li>
+<li>SELECT name, gnp FROM Country WHERE continent = ‘Asia’ OR continent = ‘Oceania’ ORDER BY gnp ;</li>
+<li>SELECT name, gnp FROM Country WHERE continent IN (‘Asia’,‘Oceania’) ORDER BY gnp LIMIT 10;</li>
+<li>SELECT name, gnp FROM Country WHERE continent = ‘Asia’ OR continent =‘Oceania’ ORDER BY gnp DESC LIMIT 10;</li>
+</ol>
+</blockquote>
 
 
 </div>
