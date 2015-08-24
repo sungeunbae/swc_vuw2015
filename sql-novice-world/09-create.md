@@ -214,7 +214,7 @@ INSERT INTO JustLatLong SELECT lat, long FROM Site;
 >~~~{.sql}
 >.read create_tables.sql
 >~~~
-> Secondly, as we have created the table structure, the heading in csv file (first row) can be now removed. Delete
+> Secondly, as we have created the table structure, the headers in csv file (first row) can be now removed. Delete
 > the first line, and leave the data only.
 >
 > Thirdly, you need to set the mode to load CSV format correctly.
