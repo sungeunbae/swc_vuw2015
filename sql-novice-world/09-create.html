@@ -263,13 +263,14 @@ INSERT INTO JustLatLong SELECT lat, long FROM Site;
 <p>If you have <a href="reference.html#comma-separated-values">CSV</a> files, you can import the data using SQLite’s CSV import feature.</p>
 <p>First, you need to create the table. You can enter the SQL commands for creating tables. Alternatively, you can execute <code>create_tables.sql</code> (which already contains the SQL commands) by:</p>
 <pre class="sql"><code>.read create_tables.sql</code></pre>
-<p>Secondly, you need to set the mode to load CSV format correctly.</p>
+<p>Secondly, as we have created the table structure, the headers in csv file (first row) can be now removed. Delete the first line, and leave the data only.</p>
+<p>Thirdly, you need to set the mode to load CSV format correctly.</p>
 <pre class="sql"><code>.mode csv</code></pre>
 <p>Finally, import each CSV file into table.</p>
 <pre class="sql"><code>.import country.csv Country
 .import city.csv City
 .import countrylanguage.csv CountryLanguage</code></pre>
-<p>Note: Importing from CSV might have an issue in handling NULL values because an empty (ie. NULL) value in CSV is an empty string (ie. “”), which might not be exactly what you expect.</p>
+<p>Note: Importing from CSV might have an issue in handling NULL values because an empty (ie. NULL) value in CSV is an empty string (ie. “”), which might not be exactly what you expect. If we used <a href="reference.html#sentinel-value">sentinel value</a>) by marking missing data rather than <code>null</code>, such a problem can be avoided.</p>
 </blockquote>
 <blockquote>
 <h3>Backing Up with SQL</h3>
